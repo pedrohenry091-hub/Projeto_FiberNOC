@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Details</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<aside class="sidebar collapsed" id="sidebar">
+    <img src="logo.png" class="sidebar-logo">
+    <h3>FiberNOC</h3>
+
+    <a href="index.html">Dashboard</a>
+    <a href="onu.html">ONUs</a>
+</aside>
+
+<main class="main-content" id="main">
+
+    <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+
+<h1>ONU Details</h1>
+
+<div class="details-grid">
+
+    <div class="panel">
+        <h2>General Info</h2>
+        <p><strong>ID:</strong> <span id="onuId"></span></p>
+        <p><strong>Status:</strong> <span id="onuStatus" class="status"></span></p>
+    </div>
+
+    <div class="panel">
+        <h2>Optical Signal</h2>
+        <p><strong>RX Power:</strong> <span id="onuSignal" class="signal"></span></p>
+        <p><strong>TX Power:</strong> -2 dBm</p>
+    </div>
+
+    <div class="panel">
+        <h2>Device Info</h2>
+        <p>Model: AN5506-04-F</p>
+        <p>Firmware: RP2612</p>
+        <p>Vendor: FiberHome</p>
+    </div>
+
+    <div class="panel">
+        <h2>Uptime</h2>
+        <p>43 days, 12 hours</p>
+    </div>
+
+</div>
+
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>ONUs</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<aside class="sidebar collapsed" id="sidebar">
+    <img src="logo.png" class="sidebar-logo">
+    <h3>FiberNOC</h3>
+
+    <a href="index.html">Dashboard</a>
+    <a href="onu.html">ONUs</a>
+</aside>
+
+<main class="main-content" id="main">
+
+    <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+
+    <h1>Lista de ONUs</h1>
+
+    <h1>ONUs</h1>
+
+<input 
+    type="text" 
+    id="searchInput" 
+    placeholder="Buscar ONU..."
+    onkeyup="filterOnu()"
+    class="search-box"
+>
+
+<table class="onu-table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Status</th>
+            <th>RX Power</th>
+            <th>Ação</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <tr>
+            <td>ONU 1</td>
+            <td class="status online">Online</td>
+            <td class="signal">-18</td>
+            <td>
+                <button onclick="goToDetails(1,'Online','-18 dBm')">
+                    Ver Detalhes
+                </button>
+            </td>
+        </tr>
+
+        <tr>
+            <td>ONU 2</td>
+            <td class="status offline">Offline</td>
+            <td class="signal">-30</td>
+            <td>
+                <button onclick="goToDetails(2,'Offline','-30 dBm')">
+                    Ver Detalhes
+                </button>
+            </td>
+        </tr>
+
+        <tr>
+            <td>ONU 3</td>
+            <td class="status online">Online</td>
+            <td>-20 dBm</td>
+            <td>
+                <button onclick="goToDetails(3,'Online','-20 dBm')">
+                    Ver Detalhes
+                </button>
+            </td>
+        </tr>
+
+        <tr>
+            <td>ONU 4</td>
+            <td class="status online">Online</td>
+            <td>-22 dBm</td>
+            <td>
+                <button onclick="goToDetails(4,'Online','-22 dBm')">
+                    Ver Detalhes
+                </button>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<aside class="sidebar collapsed" id="sidebar">
+    <img src="logo.png" class="sidebar-logo">
+    <h3>FiberNOC</h3>
+
+    <a href="index.html">Dashboard</a>
+    <a href="onu.html">ONUs</a>
+</aside>
+
+<main class="main-content" id="main">
+
+    <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+
+    <h1>Dashboard</h1>
+
+<div class="top-cards">
+    <div class="mini-card online">
+        <span>ONUs Online</span>
+        <strong>120</strong>
+    </div>
+
+    <div class="mini-card offline">
+        <span>ONUs Offline</span>
+        <strong>8</strong>
+    </div>
+
+    <div class="mini-card alert">
+        <span>Alerts</span>
+        <strong>3</strong>
+    </div>
+
+    <div class="mini-card">
+        <span>CPU Usage</span>
+        <strong>45%</strong>
+    </div>
+</div>
+
+<div class="dashboard-grid">
+
+    <div class="panel">
+        <h2>Network Status</h2>
+        <p>All systems operational</p>
+    </div>
+
+    <div class="panel">
+        <h2>Recent Alerts</h2>
+        <ul class="alerts">
+            <li>ONU 2 offline</li>
+            <li>High latency detected</li>
+            <li>Signal low ONU 4</li>
+        </ul>
+    </div>
+
+</div>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>
