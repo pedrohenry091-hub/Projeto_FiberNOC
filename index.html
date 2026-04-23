@@ -2,66 +2,62 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FiberNOC - Dashboard</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <aside class="sidebar collapsed" id="sidebar">
-    <img src="logo.png" class="sidebar-logo">
+    <img src="logo.png" class="sidebar-logo" alt="Logo FiberNOC">
     <h3>FiberNOC</h3>
-
-    <a href="index.html">Dashboard</a>
-    <a href="onu.html">ONUs</a>
+    <nav>
+        <a href="index.html">Dashboard</a>
+        <a href="onu.html">ONUs</a>
+    </nav>
 </aside>
 
 <main class="main-content" id="main">
+    <header>
+        <button class="menu-toggle" id="btn-toggle-menu" aria-label="Abrir menu">☰</button>
+        <h1>Dashboard</h1>
+    </header>
 
-    <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+    <div class="top-cards">
+        <div class="mini-card online">
+            <span>ONUs Online</span>
+            <strong id="stat-online">-</strong>
+        </div>
 
-    <h1>Dashboard</h1>
+        <div class="mini-card offline">
+            <span>ONUs Offline</span>
+            <strong id="stat-offline">-</strong>
+        </div>
 
-<div class="top-cards">
-    <div class="mini-card online">
-        <span>ONUs Online</span>
-        <strong>120</strong>
+        <div class="mini-card alert">
+            <span>Alerts</span>
+            <strong id="stat-alerts">-</strong>
+        </div>
+
+        <div class="mini-card">
+            <span>CPU Usage</span>
+            <strong id="stat-cpu">-</strong>
+        </div>
     </div>
 
-    <div class="mini-card offline">
-        <span>ONUs Offline</span>
-        <strong>8</strong>
+    <div class="dashboard-grid">
+        <div class="panel">
+            <h2>Network Status</h2>
+            <p id="network-status">Carregando...</p>
+        </div>
+
+        <div class="panel">
+            <h2>Recent Alerts</h2>
+            <ul class="alerts" id="list-alerts"></ul>
+        </div>
     </div>
-
-    <div class="mini-card alert">
-        <span>Alerts</span>
-        <strong>3</strong>
-    </div>
-
-    <div class="mini-card">
-        <span>CPU Usage</span>
-        <strong>45%</strong>
-    </div>
-</div>
-
-<div class="dashboard-grid">
-
-    <div class="panel">
-        <h2>Network Status</h2>
-        <p>All systems operational</p>
-    </div>
-
-    <div class="panel">
-        <h2>Recent Alerts</h2>
-        <ul class="alerts">
-            <li>ONU 2 offline</li>
-            <li>High latency detected</li>
-            <li>Signal low ONU 4</li>
-        </ul>
-    </div>
-
-</div>
 </main>
 
-<script src="script.js"></script>
+<script type="module" src="script.js"></script>
 </body>
 </html>
