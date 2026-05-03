@@ -284,3 +284,18 @@ body {
 .status.offline {
     color: #ef4444;
 }
+
+/* Isso garante que o header não esconda o botão no Dashboard */
+header {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    gap: 15px;
+}
+
+.menu-toggle {
+    cursor: pointer;
+    display: inline-block;
+    min-width: 40px;
+    z-index: 10; /* Garante que ele fique na frente de tudo */
+}
