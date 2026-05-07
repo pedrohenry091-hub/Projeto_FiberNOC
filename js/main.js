@@ -26,17 +26,17 @@ async function updateDashboardStats() {
     const networkStatus = document.getElementById('network-status');
     if (networkStatus) {
         if (offlineCount > 0) {
-            networkStatus.textContent = "Atenção: Existem equipamentos offline.";
-            networkStatus.style.color = "#e74c3c"; // Vermelho
+            networkStatus.textContent = "⚠️ Atenção: Existem equipamentos offline.";
+            networkStatus.style.color = "#ef4444"; // Cor Red-500
         } else {
-            networkStatus.textContent = "Sistema operando normalmente.";
-            networkStatus.style.color = "#2ecc71"; // Verde
+            networkStatus.textContent = "✅ Sistema operando normalmente.";
+            networkStatus.style.color = "#22c55e"; // Cor Green-500
         }
     }
 }
 
 /**
- * 2. Cria a lista de alertas recentes (Manipulação do DOM)
+ * 2. Cria a lista de alertas recentes (Limitado aos 6 mais recentes)
  */
 async function renderAlertList() {
     const logs = await getLogs();
@@ -44,13 +44,19 @@ async function renderAlertList() {
     
     if (!alertList) return;
 
-    alertList.innerHTML = ''; // Limpa a lista antes de preencher
+    alertList.innerHTML = ''; 
 
-    logs.forEach(log => {
-        // Cria o elemento <li> via JavaScript (Requisito do professor)
+    // Pega apenas os últimos 6 logs e inverte para o mais novo aparecer no topo
+    const ultimosLogs = [...logs].reverse().slice(0, 6);
+
+    ultimosLogs.forEach(log => {
         const li = document.createElement('li');
-        li.className = `alert-item ${log.tipo}`; // Define se é 'critical' ou 'warning'
-        li.innerHTML = `<strong>${log.data}</strong>: ${log.evento}`;
+        // 'log.tipo' deve ser 'error' ou 'warning' para bater com o CSS
+        li.className = `alert-item ${log.tipo}`; 
+        li.innerHTML = `
+            <small style="display:block; color:#64748b; font-size:0.7em;">${log.data}</small>
+            <span><strong>${log.evento}</strong> - ${log.onu}</span>
+        `;
         
         alertList.appendChild(li);
     });
@@ -58,14 +64,17 @@ async function renderAlertList() {
 
 /**
  * 3. Configura o menu lateral (Sidebar)
+ * Ajustado para empurrar o conteúdo principal
  */
 function setupSidebar() {
     const menuBtn = document.querySelector('.menu-toggle');
     const sidebar = document.getElementById('sidebar');
+    const main = document.getElementById('main');
     
-    if (menuBtn && sidebar) {
+    if (menuBtn && sidebar && main) {
         menuBtn.addEventListener('click', () => {
             sidebar.classList.toggle('collapsed');
+            main.classList.toggle('expanded');
         });
     }
 }

@@ -9,7 +9,6 @@ async function renderCriticalPanel() {
     tbody.innerHTML = ''; 
 
     // Filtro de Monitoramento: Só mostra quem tem sinal ruim (pior que -25dBm)
-    // Isso é o que define uma "ONU em estado crítico"
     const listaCritica = onus.filter(onu => onu.sinal <= -25);
 
     if (listaCritica.length === 0) {
@@ -20,12 +19,12 @@ async function renderCriticalPanel() {
     listaCritica.forEach(onu => {
         const tr = document.createElement('tr');
 
-        // Lógica de Severidade (Monitoramento Prático)
-        let color = "#f1c40f"; // Amarelo (Atenção)
+        // Lógica de Severidade (Cores baseadas no padrão de rede)
+        let color = "#f1c40f"; // Amarelo (Atenção: -25 a -27.9)
         let label = "ALERTA";
 
         if (onu.sinal <= -28) {
-            color = "#e74c3c"; // Vermelho (Crítico/Risco de Queda)
+            color = "#e74c3c"; // Vermelho (Crítico: <= -28)
             label = "CRÍTICO";
         }
 
@@ -36,7 +35,7 @@ async function renderCriticalPanel() {
             <td><span class="badge ${onu.status}">${onu.status.toUpperCase()}</span></td>
             <td><span style="background: ${color}; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75em; font-weight: bold;">${label}</span></td>
             <td>
-                <button title="Ver Topologia" onclick="location.href='topology.html?id=${onu.id}'">🌐</button>
+                <button title="Ver Detalhes" onclick="location.href='details.html?id=${onu.id}'">🔍</button>
                 <button title="Localizar no Mapa" onclick="location.href='mapa.html?id=${onu.id}'">📍</button>
             </td>
         `;
@@ -45,12 +44,20 @@ async function renderCriticalPanel() {
     });
 }
 
-// Configuração do Menu Lateral
+/**
+ * Configuração do Menu Lateral
+ * Ajustado para controlar tanto a sidebar quanto o conteúdo principal (main)
+ */
 function setupSidebar() {
     const menuBtn = document.querySelector('.menu-toggle');
     const sidebar = document.getElementById('sidebar');
-    if (menuBtn && sidebar) {
-        menuBtn.addEventListener('click', () => sidebar.classList.toggle('collapsed'));
+    const main = document.getElementById('main'); // Referência ao conteúdo principal
+
+    if (menuBtn && sidebar && main) {
+        menuBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+            main.classList.toggle('expanded'); // Adiciona/Remove a margem esquerda
+        });
     }
 }
 

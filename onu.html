@@ -8,7 +8,7 @@
 </head>
 <body>
 
-<aside class="sidebar collapsed" id="sidebar">
+<aside class="sidebar" id="sidebar">
     <img src="logo.png" class="sidebar-logo" alt="Logo FiberNOC">
     <h3>FiberNOC</h3>
     <nav>
@@ -28,26 +28,30 @@
         <h1>Lista de ONUs</h1>
     </header>
 
-    <input 
-        type="text" 
-        id="searchInput" 
-        placeholder="Buscar por Nome ou MAC..." 
-        class="search-box"
-    >
+    <div style="margin-bottom: 20px;">
+        <input 
+            type="text" 
+            id="searchInput" 
+            placeholder="Buscar por Nome ou MAC..." 
+            class="search-box"
+        >
+    </div>
 
-    <table class="onu-table">
-        <thead>
-            <tr>
-                <th>Nome/User</th>
-                <th>SN / MAC</th>
-                <th>Status</th>
-                <th>Sinal (Rx)</th>
-                <th>Ações</th>
-            </tr>
-        </thead>
-        <tbody id="tabela-onus">
-            </tbody>
-    </table>
+    <div class="table-container">
+        <table class="onu-table">
+            <thead>
+                <tr>
+                    <th>Nome/User</th>
+                    <th>SN / MAC</th>
+                    <th>Status</th>
+                    <th>Sinal (Rx)</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="tabela-onus">
+                </tbody>
+        </table>
+    </div>
 </main>
 
 <script type="module" src="js/onus.js"></script>
