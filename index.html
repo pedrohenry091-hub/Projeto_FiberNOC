@@ -8,7 +8,7 @@
 </head>
 <body>
 
-<aside class="sidebar collapsed" id="sidebar">
+<aside class="sidebar" id="sidebar">
     <img src="logo.png" class="sidebar-logo" alt="Logo FiberNOC">
     <h3>FiberNOC</h3>
     <nav>
@@ -24,41 +24,42 @@
 
 <main class="main-content" id="main">
     <header>
-        <button class="menu-toggle" onclick="toggleSidebar()" aria-label="Abrir menu">☰</button>
+        <button class="menu-toggle" aria-label="Abrir menu">☰</button>
         <h1>Dashboard</h1>
     </header>
 
     <div class="top-cards">
-    <div class="mini-card online">
-        <span>ONUs Online</span>
-        <strong id="stat-online">-</strong>
-    </div>
+        <div class="mini-card online">
+            <span>ONUs Online</span>
+            <strong id="stat-online">-</strong>
+        </div>
 
-    <div class="mini-card offline">
-        <span>ONUs Offline</span>
-        <strong id="stat-offline">-</strong>
-    </div>
+        <div class="mini-card offline">
+            <span>ONUs Offline</span>
+            <strong id="stat-offline">-</strong>
+        </div>
 
-    <div class="mini-card alert">
-        <span>Alerts</span>
-        <strong id="stat-alerts">-</strong>
-    </div>
+        <div class="mini-card alert">
+            <span>Alertas Recentes</span>
+            <strong id="stat-alerts">-</strong>
+        </div>
 
-    <div class="mini-card">
-        <span>CPU Usage</span>
-        <strong id="stat-cpu">12%</strong> 
-    </div>
+        <div class="mini-card">
+            <span>Uso de CPU (OLT)</span>
+            <strong id="stat-cpu">12%</strong> 
+        </div>
     </div>
 
     <div class="dashboard-grid">
         <div class="panel">
-            <h2>Network Status</h2>
-            <p id="network-status">Carregando...</p>
+            <h2>Status da Rede</h2>
+            <p id="network-status">Sincronizando com o banco de dados...</p>
         </div>
 
         <div class="panel">
-            <h2>Recent Alerts</h2>
-            <ul class="alerts" id="list-alerts"></ul>
+            <h2>Alertas Recentes</h2>
+            <ul class="alerts" id="list-alerts">
+                </ul>
         </div>
     </div>
 </main>
