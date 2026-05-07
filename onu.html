@@ -2,94 +2,54 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>ONUs</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FiberNOC - Lista de ONUs</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <aside class="sidebar collapsed" id="sidebar">
-    <img src="logo.png" class="sidebar-logo">
+    <img src="logo.png" class="sidebar-logo" alt="Logo FiberNOC">
     <h3>FiberNOC</h3>
-
-    <a href="index.html">Dashboard</a>
-    <a href="onu.html">ONUs</a>
+    <nav>
+        <a href="index.html"><strong>Dashboard</strong></a>
+        <a href="topology.html"><strong>Topologia (OLT)</strong></a>
+        <a href="onu.html"><strong>ONUs</strong></a>
+        <a href="mapa.html"><strong>Mapa Lógico</strong></a>
+        <a href="unauthorized.html"><strong>ONUs não autorizadas</strong></a>
+        <a href="critical_signals.html"><strong>Sinal Crítico</strong></a>
+        <a href="logs.html"><strong>Logs de Eventos</strong></a>
+    </nav>
 </aside>
 
 <main class="main-content" id="main">
+    <header>
+        <button class="menu-toggle">☰</button>
+        <h1>Lista de ONUs</h1>
+    </header>
 
-    <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+    <input 
+        type="text" 
+        id="searchInput" 
+        placeholder="Buscar por Nome ou MAC..." 
+        class="search-box"
+    >
 
-    <h1>Lista de ONUs</h1>
-
-    <h1>ONUs</h1>
-
-<input 
-    type="text" 
-    id="searchInput" 
-    placeholder="Buscar ONU..."
-    onkeyup="filterOnu()"
-    class="search-box"
->
-
-<table class="onu-table">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Status</th>
-            <th>RX Power</th>
-            <th>Ação</th>
-        </tr>
-    </thead>
-
-    <tbody>
-        <tr>
-            <td>ONU 1</td>
-            <td class="status online">Online</td>
-            <td class="signal">-18</td>
-            <td>
-                <button onclick="goToDetails(1,'Online','-18 dBm')">
-                    Ver Detalhes
-                </button>
-            </td>
-        </tr>
-
-        <tr>
-            <td>ONU 2</td>
-            <td class="status offline">Offline</td>
-            <td class="signal">-30</td>
-            <td>
-                <button onclick="goToDetails(2,'Offline','-30 dBm')">
-                    Ver Detalhes
-                </button>
-            </td>
-        </tr>
-
-        <tr>
-            <td>ONU 3</td>
-            <td class="status online">Online</td>
-            <td>-20 dBm</td>
-            <td>
-                <button onclick="goToDetails(3,'Online','-20 dBm')">
-                    Ver Detalhes
-                </button>
-            </td>
-        </tr>
-
-        <tr>
-            <td>ONU 4</td>
-            <td class="status online">Online</td>
-            <td>-22 dBm</td>
-            <td>
-                <button onclick="goToDetails(4,'Online','-22 dBm')">
-                    Ver Detalhes
-                </button>
-            </td>
-        </tr>
-    </tbody>
-</table>
-
+    <table class="onu-table">
+        <thead>
+            <tr>
+                <th>Nome/User</th>
+                <th>SN / MAC</th>
+                <th>Status</th>
+                <th>Sinal (Rx)</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody id="tabela-onus">
+            </tbody>
+    </table>
 </main>
 
-<script src="script.js"></script>
+<script type="module" src="js/onus.js"></script>
 </body>
 </html>
