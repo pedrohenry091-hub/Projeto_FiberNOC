@@ -162,3 +162,61 @@ header {
     border-radius: 6px;
     cursor: pointer;
 }
+
+/* --- CORREÇÃO DA TELA DE LOGIN (SEM QUEBRAR O PROJETO) --- */
+
+/* Quando o body tiver a classe login-body, ele anula o flex lateral */
+body.login-body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--primary); /* Fundo azul escuro profissional */
+    height: 100vh;
+    width: 100vw;
+    margin: 0;
+}
+
+/* Container do Login */
+.login-container {
+    background: white;
+    padding: 40px;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 360px; /* Não deixa ficar gigante no notebook */
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    margin-left: 0; /* Remove margem da sidebar no login */
+}
+
+/* Logo específica do Login */
+.login-logo {
+    width: 150px; /* Um pouco maior que a da sidebar */
+    height: auto;
+    margin-bottom: 20px;
+}
+
+/* Ajuste nos inputs para ficarem bonitos */
+.login-container input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    box-sizing: border-box; /* Garante que o padding não estoure a largura */
+}
+
+.login-container button {
+    width: 100%;
+    padding: 12px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.login-container button:hover {
+    background: #2563eb;
+}
