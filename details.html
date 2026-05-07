@@ -2,55 +2,59 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Details</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FiberNOC - Detalhes da ONU</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<aside class="sidebar collapsed" id="sidebar">
-    <img src="logo.png" class="sidebar-logo">
+<aside class="sidebar" id="sidebar">
+    <img src="logo.png" class="sidebar-logo" alt="Logo FiberNOC">
     <h3>FiberNOC</h3>
-
-    <a href="index.html">Dashboard</a>
-    <a href="onu.html">ONUs</a>
+    <nav>
+        <a href="index.html"><strong>Dashboard</strong></a>
+        <a href="topology.html"><strong>Topologia (OLT)</strong></a>
+        <a href="onu.html"><strong>ONUs</strong></a>
+        <a href="mapa.html"><strong>Mapa Lógico</strong></a>
+        <a href="unauthorized.html"><strong>ONUs não autorizadas</strong></a>
+        <a href="critical_signals.html"><strong>Sinal Crítico</strong></a>
+        <a href="logs.html"><strong>Logs de Eventos</strong></a>
+    </nav>
 </aside>
 
 <main class="main-content" id="main">
+    <header>
+        <button class="menu-toggle">☰</button>
+        <h1>Detalhes da ONU</h1>
+    </header>
 
-    <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+    <div class="details-grid">
+        <div class="panel">
+            <h2>Informações Gerais</h2>
+            <p><strong>ID da ONU:</strong> <span id="onuId">-</span></p>
+            <p><strong>Status atual:</strong> <span id="onuStatus" class="badge">-</span></p>
+        </div>
 
-<h1>ONU Details</h1>
+        <div class="panel">
+            <h2>Níveis Ópticos</h2>
+            <p><strong>RX Power (Recebimento):</strong> <span id="onuSignal" class="signal">-</span></p>
+            <p><strong>TX Power (Envio):</strong> <span style="color: #22c55e; font-weight: bold;">+2.1 dBm</span></p>
+        </div>
 
-<div class="details-grid">
+        <div class="panel">
+            <h2>Hardware</h2>
+            <p><strong>Modelo:</strong> AN5506-04-F</p>
+            <p><strong>Firmware:</strong> RP2612</p>
+            <p><strong>Fabricante:</strong> FiberHome</p>
+        </div>
 
-    <div class="panel">
-        <h2>General Info</h2>
-        <p><strong>ID:</strong> <span id="onuId"></span></p>
-        <p><strong>Status:</strong> <span id="onuStatus" class="status"></span></p>
+        <div class="panel">
+            <h2>Tempo de Atividade (Uptime)</h2>
+            <p>🟢 43 dias, 12 horas, 05 min</p>
+        </div>
     </div>
-
-    <div class="panel">
-        <h2>Optical Signal</h2>
-        <p><strong>RX Power:</strong> <span id="onuSignal" class="signal"></span></p>
-        <p><strong>TX Power:</strong> -2 dBm</p>
-    </div>
-
-    <div class="panel">
-        <h2>Device Info</h2>
-        <p>Model: AN5506-04-F</p>
-        <p>Firmware: RP2612</p>
-        <p>Vendor: FiberHome</p>
-    </div>
-
-    <div class="panel">
-        <h2>Uptime</h2>
-        <p>43 days, 12 hours</p>
-    </div>
-
-</div>
-
 </main>
 
-<script src="script.js"></script>
+<script type="module" src="js/details.js"></script>
 </body>
 </html>
