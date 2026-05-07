@@ -1,38 +1,34 @@
 // js/api.js
 
-// URL onde o seu json-server estará rodando
-const API_URL = 'http://localhost:3000';
+// Link direto para o seu db.json na branch add-logs
+const URL_DB = 'https://raw.githubusercontent.com/pedrohenry091-hub/Projeto_FiberNOC/refs/heads/main/db.json';
 
 /**
- * Busca a lista de todas as ONUs do servidor
- * @returns {Promise<Array>} Lista de objetos ONU
+ * Busca a lista de todas as ONUs
  */
 export async function getOnus() {
     try {
-        const response = await fetch(`${API_URL}/onus`);
-        if (!response.ok) {
-            throw new Error(`Erro HTTP: ${response.status}`);
-        }
-        return await response.json();
+        const response = await fetch(URL_DB);
+        if (!response.ok) throw new Error("Erro ao acessar DB");
+        const data = await response.json();
+        return data.onus; 
     } catch (error) {
-        console.error("Erro ao buscar ONUs no servidor:", error);
-        return []; // Retorna lista vazia para o sistema não travar
+        console.error("Erro ao buscar ONUs:", error);
+        return [];
     }
 }
 
 /**
- * Busca os logs e alertas registrados
- * @returns {Promise<Array>} Lista de objetos de log
+ * Busca o histórico de eventos (Logs)
  */
 export async function getLogs() {
     try {
-        const response = await fetch(`${API_URL}/logs`);
-        if (!response.ok) {
-            throw new Error(`Erro HTTP: ${response.status}`);
-        }
-        return await response.json();
+        const response = await fetch(URL_DB);
+        if (!response.ok) throw new Error("Erro ao acessar DB");
+        const data = await response.json();
+        return data.logs;
     } catch (error) {
-        console.error("Erro ao buscar logs no servidor:", error);
+        console.error("Erro ao buscar logs:", error);
         return [];
     }
 }

@@ -1,70 +1,51 @@
 {
   "onus": [
     {
-      "id": "1",
-      "nome": "João Silva",
+      "id": 1,
+      "nome": "CLIENTE_01",
+      "mac": "FHTT00A1B2C3",
       "status": "online",
-      "sinal": -18.5,
-      "olt": "OLT-MATRIZ-01",
-      "pon": "1/1/5",
-      "modelo": "AN5506-04-F"
+      "sinal": -19.5
     },
     {
-      "id": "2",
-      "nome": "Cond. Alpha",
-      "status": "online",
-      "sinal": -26.4,
-      "olt": "OLT-MATRIZ-01",
-      "pon": "1/1/5",
-      "modelo": "AN5506-02-B"
-    },
-    {
-      "id": "3",
-      "nome": "Mercado Preço Bom",
+      "id": 2,
+      "nome": "CLIENTE_02",
+      "mac": "FHTT00C3D4E5",
       "status": "offline",
-      "sinal": -31.0,
-      "olt": "OLT-FILIAL-02",
-      "pon": "1/2/1",
-      "modelo": "AN5506-04-F"
+      "sinal": -31.2
     },
     {
-      "id": "4",
-      "nome": "Ana Oliveira",
+      "id": 3,
+      "nome": "CLIENTE_03",
+      "mac": "FHTT00E5F6G7",
       "status": "online",
-      "sinal": -21.2,
-      "olt": "OLT-MATRIZ-01",
-      "pon": "1/1/2",
-      "modelo": "AN5506-04-F"
-    },
-    {
-      "id": "5",
-      "nome": "Carlos Souza",
-      "status": "online",
-      "sinal": -19.8,
-      "olt": "OLT-MATRIZ-01",
-      "pon": "1/1/2",
-      "modelo": "AN5506-02-B"
+      "sinal": -26.8
     }
   ],
   "logs": [
-    { 
-      "id": "1", 
-      "data": "2026-05-06 20:30", 
-      "evento": "ONU 3 - Link Down (LOS)", 
-      "tipo": "critical" 
-    },
-    { 
-      "id": "2", 
-      "data": "2026-05-06 20:32", 
-      "evento": "ONU 2 - Sinal Degradado (-26.4 dBm)", 
-      "tipo": "warning" 
-    }
-  ],
-  "unauthorized": [
     {
-      "id": "99",
-      "sn": "FHTT009988",
-      "pon": "1/1/10"
+      "id": 1,
+      "data": "2026-05-06 10:15:30",
+      "onu": "CLIENTE_02",
+      "evento": "PON_LOSS",
+      "detalhe": "Sinal caiu (LOS). Possível rompimento de fibra.",
+      "tipo": "error"
+    },
+    {
+      "id": 2,
+      "data": "2026-05-06 09:40:12",
+      "onu": "CLIENTE_01",
+      "evento": "POWER_OFF",
+      "detalhe": "Equipamento desligado (Dying Gasp).",
+      "tipo": "warning"
+    },
+    {
+      "id": 3,
+      "data": "2026-05-06 08:20:05",
+      "onu": "CLIENTE_03",
+      "evento": "CONFIG_CHG",
+      "detalhe": "Alteração de Profile de banda efetuada.",
+      "tipo": "info"
     }
   ]
 }

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FiberNOC - Logs de Eventos</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<aside class="sidebar collapsed" id="sidebar">
+    <img src="logo.png" class="sidebar-logo">
+    <h3>FiberNOC</h3>
+    <nav>
+        <a href="index.html"><strong>Dashboard</strong></a>
+        <a href="topology.html"><strong>Topologia (OLT)</strong></a>
+        <a href="onu.html"><strong>ONUs</strong></a>
+        <a href="mapa.html"><strong>Mapa Lógico</strong></a>
+        <a href="unauthorized.html"><strong>ONUs não autorizadas</strong></a>
+        <a href="critical_signals.html"><strong>Sinal Crítico</strong></a>
+        <a href="logs.html"><strong>Logs de Eventos</strong></a>
+    </nav>
+</aside>
+
+<main class="main-content">
+    <header>
+        <button class="menu-toggle">☰</button>
+        <h1>Histórico de Alarmes e Eventos</h1>
+    </header>
+
+    <div class="table-container">
+        <table class="onu-table">
+            <thead>
+                <tr>
+                    <th>Data / Hora</th>
+                    <th>ONU / Cliente</th>
+                    <th>Evento</th>
+                    <th>Descrição do Alarme</th>
+                </tr>
+            </thead>
+            <tbody id="tabela-logs">
+                </tbody>
+        </table>
+    </div>
+</main>
+
+<script type="module" src="js/logs.js"></script>
+</body>
+</html>
