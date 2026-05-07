@@ -148,3 +148,47 @@ header {
 .mini-card.online { border-left-color: #22c55e; }
 .mini-card.offline { border-left-color: #ef4444; }
 .mini-card.alert { border-left-color: #f59e0b; }
+
+/* Ícones de Equipamento Estilo UNM2000 */
+.onu-icon {
+    display: inline-block;
+    width: 24px;
+    height: 18px;
+    background-color: #cbd5e1; /* Cinza se estiver sem status */
+    border: 2px solid #64748b;
+    border-radius: 3px;
+    position: relative;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+
+/* Detalhe do rack/modem (aquela bordinha em cima) */
+.onu-icon::before {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 3px;
+    right: 3px;
+    height: 3px;
+    background: rgba(0,0,0,0.1);
+}
+
+/* Status: Online (Verde igual UNM) */
+.onu-icon.online {
+    background-color: #22c55e;
+    border-color: #16a34a;
+    box-shadow: 0 0 5px rgba(34, 197, 94, 0.5);
+}
+
+/* Status: Offline (Branco com borda vermelha conforme a imagem) */
+.onu-icon.offline {
+    background-color: #ffffff;
+    border-color: #ef4444;
+    border-width: 2px;
+}
+
+/* Status: Alerta/Sinal Ruim (Laranja) */
+.onu-icon.warning {
+    background-color: #f59e0b;
+    border-color: #d97706;
+}

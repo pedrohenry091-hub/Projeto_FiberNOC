@@ -1,11 +1,10 @@
 // js/onus.js
 import { getOnus } from './api.js';
 
-// Variável global para armazenar os dados e facilitar o filtro de busca
 let allOnus = [];
 
 /**
- * Renderiza a tabela de ONUs na tela
+ * 1. Renderiza a tabela com Ícones estilo UNM2000
  */
 function renderTable(lista) {
     const tbody = document.getElementById('tabela-onus');
@@ -16,13 +15,22 @@ function renderTable(lista) {
     lista.forEach(onu => {
         const tr = document.createElement('tr');
         
-        // Sincronizando com as cores de sinal do style.css
-        let signalStyle = 'color: #22c55e;'; // Verde (Normal)
-        if (onu.sinal <= -28) signalStyle = 'color: #ef4444;'; // Vermelho (Crítico)
-        else if (onu.sinal <= -25) signalStyle = 'color: #f59e0b;'; // Amarelo (Alerta)
+        // Lógica de cores do sinal
+        let signalStyle = 'color: #22c55e;'; 
+        if (onu.sinal <= -28) signalStyle = 'color: #ef4444;'; 
+        else if (onu.sinal <= -25) signalStyle = 'color: #f59e0b;';
+
+        // Lógica do Ícone Visual (UNM2000 Style)
+        let statusIconClass = onu.status; // 'online' ou 'offline'
+        if (onu.status === 'online' && onu.sinal <= -25) {
+            statusIconClass = 'warning'; // Fica laranja se estiver online mas com sinal ruim
+        }
 
         tr.innerHTML = `
-            <td><strong>${onu.nome}</strong></td>
+            <td>
+                <div class="onu-icon ${statusIconClass}"></div>
+                <strong>${onu.nome}</strong>
+            </td>
             <td><code>${onu.mac}</code></td>
             <td><span class="badge ${onu.status}">${onu.status.toUpperCase()}</span></td>
             <td style="${signalStyle} font-weight:bold;">${onu.sinal} dBm</td>
@@ -36,7 +44,42 @@ function renderTable(lista) {
 }
 
 /**
- * Busca/Filtro em tempo real
+ * 2. Novo: Filtro por Região (Botões dinâmicos)
+ */
+function setupRegionFilters() {
+    const filterContainer = document.createElement('div');
+    filterContainer.className = 'region-filters';
+    filterContainer.style.marginBottom = '20px';
+    
+    // Pega todas as regiões únicas do seu JSON
+    const regioes = ['Todas', ...new Set(allOnus.map(onu => onu.regiao))];
+
+    regioes.forEach(regiao => {
+        const btn = document.createElement('button');
+        btn.innerText = regiao;
+        btn.className = 'btn-filter';
+        btn.style.marginRight = '10px';
+        btn.style.padding = '8px 15px';
+        btn.style.cursor = 'pointer';
+
+        btn.onclick = () => {
+            if (regiao === 'Todas') {
+                renderTable(allOnus);
+            } else {
+                const filtradas = allOnus.filter(o => o.regiao === regiao);
+                renderTable(filtradas);
+            }
+        };
+        filterContainer.appendChild(btn);
+    });
+
+    // Insere os botões antes da caixa de busca
+    const searchInput = document.getElementById('searchInput');
+    searchInput.parentNode.insertBefore(filterContainer, searchInput);
+}
+
+/**
+ * Busca/Filtro em tempo real por Nome/MAC
  */
 function setupSearch() {
     const searchInput = document.getElementById('searchInput');
@@ -53,7 +96,7 @@ function setupSearch() {
 }
 
 /**
- * Lógica do Menu Lateral (Sidebar + Main Content)
+ * Lógica do Menu Lateral
  */
 function setupSidebar() {
     const menuBtn = document.querySelector('.menu-toggle');
@@ -68,10 +111,11 @@ function setupSidebar() {
     }
 }
 
-// Inicialização da página
+// Inicialização
 document.addEventListener('DOMContentLoaded', async () => {
     allOnus = await getOnus();
     
+    setupRegionFilters(); // Cria os botões de cidade automaticamente
     renderTable(allOnus);
     setupSearch();
     setupSidebar();
