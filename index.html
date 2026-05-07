@@ -12,8 +12,13 @@
     <img src="logo.png" class="sidebar-logo" alt="Logo FiberNOC">
     <h3>FiberNOC</h3>
     <nav>
-        <a href="index.html">Dashboard</a>
-        <a href="onu.html">ONUs</a>
+        <a href="index.html"><strong>Dashboard</strong></a>
+        <a href="topology.html"><strong>Topologia (OLT)</strong></a>
+        <a href="onu.html"><strong>ONUs</strong></a>
+        <a href="mapa.html"><strong>Mapa Lógico</strong></a>
+        <a href="unauthorized.html"><strong>ONUs não autorizadas</strong></a>
+        <a href="critical_signals.html"><strong>Sinal Crítico</strong></a>
+        <a href="logs.html"><strong>Logs de Eventos</strong></a>
     </nav>
 </aside>
 
@@ -24,25 +29,25 @@
     </header>
 
     <div class="top-cards">
-        <div class="mini-card online">
-            <span>ONUs Online</span>
-            <strong id="stat-online">-</strong>
-        </div>
+    <div class="mini-card online">
+        <span>ONUs Online</span>
+        <strong id="stat-online">-</strong>
+    </div>
 
-        <div class="mini-card offline">
-            <span>ONUs Offline</span>
-            <strong id="stat-offline">-</strong>
-        </div>
+    <div class="mini-card offline">
+        <span>ONUs Offline</span>
+        <strong id="stat-offline">-</strong>
+    </div>
 
-        <div class="mini-card alert">
-            <span>Alerts</span>
-            <strong id="stat-alerts">-</strong>
-        </div>
+    <div class="mini-card alert">
+        <span>Alerts</span>
+        <strong id="stat-alerts">-</strong>
+    </div>
 
-        <div class="mini-card">
-            <span>CPU Usage</span>
-            <strong id="stat-cpu">-</strong>
-        </div>
+    <div class="mini-card">
+        <span>CPU Usage</span>
+        <strong id="stat-cpu">12%</strong> 
+    </div>
     </div>
 
     <div class="dashboard-grid">
@@ -58,6 +63,6 @@
     </div>
 </main>
 
-<script src="script.js"></script>
+<script type="module" src="js/main.js"></script>
 </body>
 </html>
