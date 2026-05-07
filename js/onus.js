@@ -6,30 +6,29 @@ let allOnus = [];
 
 /**
  * Renderiza a tabela de ONUs na tela
- * @param {Array} lista - Array de objetos ONU
  */
 function renderTable(lista) {
     const tbody = document.getElementById('tabela-onus');
     if (!tbody) return;
 
-    tbody.innerHTML = ''; // Limpa a tabela
+    tbody.innerHTML = ''; 
 
     lista.forEach(onu => {
         const tr = document.createElement('tr');
         
-        // Lógica de cores do UNM2000 para o sinal
-        let signalClass = 'status-normal';
-        if (onu.sinal <= -27) signalClass = 'status-critical';
-        else if (onu.sinal <= -25) signalClass = 'status-warning';
+        // Sincronizando com as cores de sinal do style.css
+        let signalStyle = 'color: #22c55e;'; // Verde (Normal)
+        if (onu.sinal <= -28) signalStyle = 'color: #ef4444;'; // Vermelho (Crítico)
+        else if (onu.sinal <= -25) signalStyle = 'color: #f59e0b;'; // Amarelo (Alerta)
 
         tr.innerHTML = `
             <td><strong>${onu.nome}</strong></td>
             <td><code>${onu.mac}</code></td>
             <td><span class="badge ${onu.status}">${onu.status.toUpperCase()}</span></td>
-            <td class="${signalClass}" style="font-weight:bold;">${onu.sinal} dBm</td>
+            <td style="${signalStyle} font-weight:bold;">${onu.sinal} dBm</td>
             <td>
-                <button title="Topologia" onclick="location.href='topology.html?id=${onu.id}'">🌐</button>
-                <button title="Ver no Mapa" onclick="location.href='mapa.html?id=${onu.id}'">📍</button>
+                <button title="Ver Detalhes" onclick="location.href='details.html?id=${onu.id}'">🔍</button>
+                <button title="Localizar no Mapa" onclick="location.href='mapa.html?id=${onu.id}'">📍</button>
             </td>
         `;
         tbody.appendChild(tr);
@@ -37,7 +36,7 @@ function renderTable(lista) {
 }
 
 /**
- * Função de busca/filtro que funciona em tempo real
+ * Busca/Filtro em tempo real
  */
 function setupSearch() {
     const searchInput = document.getElementById('searchInput');
@@ -54,22 +53,23 @@ function setupSearch() {
 }
 
 /**
- * Lógica para abrir/fechar o menu lateral
+ * Lógica do Menu Lateral (Sidebar + Main Content)
  */
 function setupSidebar() {
     const menuBtn = document.querySelector('.menu-toggle');
     const sidebar = document.getElementById('sidebar');
+    const main = document.getElementById('main');
     
-    if (menuBtn && sidebar) {
+    if (menuBtn && sidebar && main) {
         menuBtn.addEventListener('click', () => {
             sidebar.classList.toggle('collapsed');
+            main.classList.toggle('expanded');
         });
     }
 }
 
 // Inicialização da página
 document.addEventListener('DOMContentLoaded', async () => {
-    // Busca os dados da API (js/api.js)
     allOnus = await getOnus();
     
     renderTable(allOnus);
