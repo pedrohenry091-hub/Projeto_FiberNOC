@@ -1,8 +1,63 @@
+:root {
+    --primary: #0f172a;
+    --secondary: #1e293b;
+    --accent: #3b82f6;
+    --success: #22c55e;
+    --danger: #ef4444;
+    --warning: #f59e0b;
+    --sidebar-width: 240px;
+}
+
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: #f1f5f9;
-    overflow-x: hidden; /* Evita barra de rolagem horizontal estranha */
+    color: #1e293b;
+}
+
+/* --- TELA DE LOGIN --- */
+.login-body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background: var(--primary);
+}
+
+.login-container {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 360px;
+    text-align: center;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+}
+
+.login-logo {
+    width: 100px; /* Tamanho controlado para notebook */
+    height: auto;
+    margin-bottom: 15px;
+}
+
+.login-container input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    box-sizing: border-box;
+}
+
+.login-container button {
+    width: 100%;
+    padding: 12px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
 }
 
 /* --- SIDEBAR --- */
@@ -10,93 +65,100 @@ body {
     position: fixed;
     top: 0;
     left: 0;
-    width: 240px; /* Aumentei um pouco para caber melhor os nomes */
+    width: var(--sidebar-width);
     height: 100vh;
-    background: #0f172a;
+    background: var(--primary);
     color: white;
     padding: 20px;
     transition: transform 0.3s ease;
-    z-index: 1000; /* Garante que fique acima de tudo */
+    z-index: 1000;
+    box-sizing: border-box;
 }
 
-/* Estado da Sidebar Escondida (Padrão inicial se quiser) */
 .sidebar.collapsed {
-    transform: translateX(-240px);
-}
-
-.sidebar-logo {
-    width: 60px;
-    margin-bottom: 10px;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
+    transform: translateX(-100%);
 }
 
 .sidebar h3 {
     text-align: center;
+    font-size: 1.2rem;
     border-bottom: 1px solid #334155;
-    padding-bottom: 10px;
-    margin-bottom: 20px;
+    padding-bottom: 15px;
 }
 
 .sidebar nav a {
     display: block;
     color: #cbd5e1;
-    padding: 12px 15px;
-    margin: 8px 0;
+    padding: 10px 15px;
+    margin: 5px 0;
     text-decoration: none;
-    border-radius: 8px;
-    transition: 0.2s;
+    border-radius: 6px;
+    font-size: 0.9rem;
 }
 
 .sidebar nav a:hover {
-    background: #1e293b;
+    background: var(--secondary);
     color: white;
 }
 
-/* --- CONTEÚDO PRINCIPAL (MAIN) --- */
+/* --- CONTEÚDO PRINCIPAL --- */
 .main-content {
-    margin-left: 240px; /* Espaço para a sidebar aberta */
-    padding: 20px;
+    margin-left: var(--sidebar-width);
+    padding: 25px;
     transition: margin-left 0.3s ease;
     min-height: 100vh;
 }
 
-/* Quando a sidebar fecha, o conteúdo expande */
 .main-content.expanded {
     margin-left: 0;
 }
 
-/* --- HEADER E BOTÃO MENU --- */
 header {
     display: flex;
     align-items: center;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.menu-toggle {
+    font-size: 20px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+/* --- DASHBOARD CARDS --- */
+.top-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     gap: 20px;
     margin-bottom: 30px;
 }
 
-.menu-toggle {
-    font-size: 24px;
-    background: #0f172a;
-    color: white;
-    border: none;
-    cursor: pointer;
-    padding: 5px 12px;
-    border-radius: 5px;
-    z-index: 1100;
-}
-
-.menu-toggle:hover {
-    background: #1e293b;
-}
-
-/* --- TABELAS E CARDS (Seu código original com ajustes de brilho) --- */
-.table-container {
+.mini-card {
     background: white;
     padding: 20px;
     border-radius: 12px;
-    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+    border-left: 6px solid #cbd5e1;
+}
+
+.mini-card.online { border-left-color: var(--success); }
+.mini-card.offline { border-left-color: var(--danger); }
+.mini-card.alert { border-left-color: var(--warning); }
+
+.mini-card h3 { font-size: 0.8rem; color: #64748b; margin: 0; }
+.mini-card .value { font-size: 1.8rem; font-weight: bold; }
+
+/* --- TABELAS --- */
+.table-container {
+    background: white;
+    border-radius: 12px;
     overflow-x: auto;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
 }
 
 .onu-table {
@@ -106,89 +168,36 @@ header {
 
 .onu-table th {
     background: #f8fafc;
-    color: #475569;
-    text-align: left;
     padding: 12px;
+    text-align: left;
     border-bottom: 2px solid #e2e8f0;
 }
 
 .onu-table td {
-    padding: 15px 12px;
+    padding: 12px;
     border-bottom: 1px solid #f1f5f9;
 }
 
-/* BADGES DE STATUS */
-.badge {
-    padding: 4px 8px;
-    border-radius: 6px;
-    font-size: 11px;
-    font-weight: bold;
-    text-transform: uppercase;
-}
-
-.badge.online { background: #dcfce7; color: #166534; }
-.badge.offline { background: #fee2e2; color: #991b1b; }
-
-/* Dashboard Cards */
-.top-cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
-    margin-bottom: 30px;
-}
-
-.mini-card {
-    background: white;
-    padding: 20px;
-    border-radius: 12px;
-    border-left: 6px solid #cbd5e1;
-    box-shadow: 0 2px 4px rgb(0 0 0 / 0.05);
-}
-
-.mini-card.online { border-left-color: #22c55e; }
-.mini-card.offline { border-left-color: #ef4444; }
-.mini-card.alert { border-left-color: #f59e0b; }
-
-/* Ícones de Equipamento Estilo UNM2000 */
+/* --- UNM2000 ICONS --- */
 .onu-icon {
     display: inline-block;
-    width: 24px;
-    height: 18px;
-    background-color: #cbd5e1; /* Cinza se estiver sem status */
+    width: 22px;
+    height: 16px;
     border: 2px solid #64748b;
     border-radius: 3px;
-    position: relative;
-    margin-right: 10px;
+    margin-right: 8px;
     vertical-align: middle;
 }
 
-/* Detalhe do rack/modem (aquela bordinha em cima) */
-.onu-icon::before {
-    content: '';
-    position: absolute;
-    top: 2px;
-    left: 3px;
-    right: 3px;
-    height: 3px;
-    background: rgba(0,0,0,0.1);
-}
+.onu-icon.online { background: var(--success); border-color: #16a34a; }
+.onu-icon.offline { background: white; border-color: var(--danger); }
+.onu-icon.warning { background: var(--warning); border-color: #d97706; }
 
-/* Status: Online (Verde igual UNM) */
-.onu-icon.online {
-    background-color: #22c55e;
-    border-color: #16a34a;
-    box-shadow: 0 0 5px rgba(34, 197, 94, 0.5);
+.badge {
+    padding: 3px 7px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: bold;
 }
-
-/* Status: Offline (Branco com borda vermelha conforme a imagem) */
-.onu-icon.offline {
-    background-color: #ffffff;
-    border-color: #ef4444;
-    border-width: 2px;
-}
-
-/* Status: Alerta/Sinal Ruim (Laranja) */
-.onu-icon.warning {
-    background-color: #f59e0b;
-    border-color: #d97706;
-}
+.badge.online { background: #dcfce7; color: #166534; }
+.badge.offline { background: #fee2e2; color: #991b1b; }
