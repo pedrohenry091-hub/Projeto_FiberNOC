@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>FiberNOC - Mapa Lógico</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="sidebar" class="sidebar">
+        <h3>FiberNOC</h3>
+        <nav>
+            <a href="index.html">Dashboard</a>
+            <a href="onu.html">Gerenciar ONUs</a>
+            <a href="mapa.html">Mapa Lógico</a>
+        </nav>
+    </div>
+
+    <div id="main" class="main-content">
+        <header>
+            <button class="menu-toggle">☰</button>
+            <h2>Mapa Lógico da Rede</h2>
+        </header>
+
+        <div class="table-container" style="text-align: center; padding: 50px;">
+            <div style="display: flex; justify-content: space-around; align-items: center;">
+                <div class="mini-card" style="border-left-color: #3b82f6;">
+                    <strong>CORE ISP</strong><br><small>10.0.0.1</small>
+                </div>
+                <span>➔</span>
+                <div class="mini-card" style="border-left-color: #22c55e;">
+                    <strong>OLT-MANAIRA</strong><br><small>Slot 1 (GC8B)</small>
+                </div>
+                <span>➔</span>
+                <div class="mini-card" style="border-left-color: #f59e0b;">
+                    <strong>DIVISOR/SPLITTER</strong><br><small>1:64</small>
+                </div>
+            </div>
+            <p style="margin-top: 30px; color: #64748b;">Visualização de topologia lógica ativa.</p>
+        </div>
+    </div>
+    <script type="module" src="js/onus.js"></script>
+</body>
+</html>
