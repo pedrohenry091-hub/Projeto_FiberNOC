@@ -5,16 +5,222 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FiberNOC - Login</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        .error-message {
+            color: #d32f2f;
+            font-size: 14px;
+            margin-top: 10px;
+            text-align: center;
+            display: none;
+        }
+        .error-message.show {
+            display: block;
+        }
+        .success-message {
+            color: #388e3c;
+            font-size: 14px;
+            margin-top: 10px;
+            text-align: center;
+            display: none;
+        }
+        .success-message.show {
+            display: block;
+        }
+        .loading {
+            display: none;
+        }
+        .loading.show {
+            display: inline-block;
+        }
+        .credentials-info {
+            background-color: #f5f5f5;
+            border-left: 4px solid #2196F3;
+            padding: 12px;
+            margin-top: 20px;
+            font-size: 12px;
+            color: #555;
+            border-radius: 4px;
+        }
+        .credentials-info strong {
+            color: #333;
+        }
+    </style>
 </head>
 <body class="login-body">
     <div class="login-container">
         <img src="logo.png" alt="Logo FiberNOC" class="login-logo">
         <h2>Acesso ao Sistema</h2>
-        <form action="index.html">
-            <input type="text" placeholder="Usuário" required>
-            <input type="password" placeholder="Senha" required>
-            <button type="submit">Entrar</button>
+        
+        <form id="loginForm">
+            <input 
+                type="text" 
+                id="username" 
+                placeholder="Usuário" 
+                required
+                autocomplete="username"
+            >
+            <input 
+                type="password" 
+                id="password" 
+                placeholder="Senha" 
+                required
+                autocomplete="current-password"
+            >
+            <button type="submit" id="submitBtn">
+                <span class="btn-text">Entrar</span>
+                <span class="loading" id="loading">⏳ Validando...</span>
+            </button>
         </form>
+
+        <div id="errorMessage" class="error-message"></div>
+        <div id="successMessage" class="success-message"></div>
+
+        <div class="credentials-info">
+            <strong>Credenciais de teste:</strong><br>
+            👤 <strong>admin</strong> / 🔑 <strong>admin123</strong><br>
+            👤 <strong>fibernoc</strong> / 🔑 <strong>senha456</strong><br>
+            👤 <strong>tecnico</strong> / 🔑 <strong>tecnico789</strong>
+        </div>
     </div>
+
+    <script src="js/auth.js"></script>
+    <script>
+        // Proteger página de login (redirecionar se já autenticado)
+        protectLoginPage();
+
+        const loginForm = document.getElementById('loginForm');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const errorMessage = document.getElementById('errorMessage');
+        const successMessage = document.getElementById('successMessage');
+        const submitBtn = document.getElementById('submitBtn');
+        const loadingSpan = document.getElementById('loading');
+        const btnText = submitBtn.querySelector('.btn-text');
+
+        /**
+         * Limpa as mensagens de erro/sucesso
+         */
+        function clearMessages() {
+            errorMessage.textContent = '';
+            errorMessage.classList.remove('show');
+            successMessage.textContent = '';
+            successMessage.classList.remove('show');
+        }
+
+        /**
+         * Mostra mensagem de erro
+         */
+        function showError(message) {
+            clearMessages();
+            errorMessage.textContent = message;
+            errorMessage.classList.add('show');
+            passwordInput.focus();
+        }
+
+        /**
+         * Mostra mensagem de sucesso
+         */
+        function showSuccess(message) {
+            clearMessages();
+            successMessage.textContent = message;
+            successMessage.classList.add('show');
+        }
+
+        /**
+         * Valida o formulário antes de enviar
+         */
+        function validateForm() {
+            clearMessages();
+
+            // Validar campo de usuário
+            if (!usernameInput.value.trim()) {
+                showError('❌ Por favor, insira o usuário');
+                usernameInput.focus();
+                return false;
+            }
+
+            // Validar comprimento do usuário
+            if (usernameInput.value.trim().length < 3) {
+                showError('❌ O usuário deve ter pelo menos 3 caracteres');
+                usernameInput.focus();
+                return false;
+            }
+
+            // Validar campo de senha
+            if (!passwordInput.value) {
+                showError('❌ Por favor, insira a senha');
+                passwordInput.focus();
+                return false;
+            }
+
+            // Validar comprimento da senha
+            if (passwordInput.value.length < 6) {
+                showError('❌ A senha deve ter pelo menos 6 caracteres');
+                passwordInput.focus();
+                return false;
+            }
+
+            return true;
+        }
+
+        /**
+         * Simula o envio do formulário com validação
+         */
+        loginForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            // Validar antes de tentar login
+            if (!validateForm()) {
+                return;
+            }
+
+            // Mostrar estado de carregamento
+            submitBtn.disabled = true;
+            loadingSpan.classList.add('show');
+            btnText.textContent = '';
+
+            // Simular delay de requisição ao servidor (opcional)
+            setTimeout(() => {
+                const username = usernameInput.value.trim();
+                const password = passwordInput.value;
+
+                // Tentar login
+                if (login(username, password)) {
+                    showSuccess(`✅ Bem-vindo, ${username}!`);
+                    
+                    // Redirecionar após sucesso
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1500);
+                } else {
+                    showError('❌ Usuário ou senha incorretos');
+                    
+                    // Restaurar estado do botão
+                    submitBtn.disabled = false;
+                    loadingSpan.classList.remove('show');
+                    btnText.textContent = 'Entrar';
+                    
+                    // Limpar campos
+                    passwordInput.value = '';
+                    usernameInput.focus();
+                }
+            }, 800);
+        });
+
+        /**
+         * Limpar mensagens quando o usuário começa a digitar
+         */
+        usernameInput.addEventListener('input', clearMessages);
+        passwordInput.addEventListener('input', clearMessages);
+
+        /**
+         * Focar no campo de senha ao pressionar Tab
+         */
+        usernameInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                passwordInput.focus();
+            }
+        });
+    </script>
 </body>
 </html>
