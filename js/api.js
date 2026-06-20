@@ -1,10 +1,14 @@
 // js/api.js - API Client para Back-end Real
 
-// URL base da API (substitua pela URL do seu backend)
-// Pode ser configurada via variável de ambiente ou localStorage
-const API_BASE_URL = localStorage.getItem('API_BASE_URL') || 
-                     process.env.REACT_APP_API_URL || 
-                     'http://localhost:3000/api';
+// URL base da API (pode ser configurada via localStorage)
+let API_BASE_URL = localStorage.getItem('API_BASE_URL') || 'http://localhost:3000/api';
+
+// Se estiver em produção (sem localhost), tenta usar a variável de ambiente
+if (typeof process !== 'undefined' && process.env.REACT_APP_API_URL) {
+    API_BASE_URL = process.env.REACT_APP_API_URL;
+}
+
+console.log(`🔌 API conectada em: ${API_BASE_URL}`);
 
 /**
  * Função auxiliar para requisições HTTP com tratamento de erro
@@ -141,8 +145,9 @@ export async function getStats() {
  * Define a URL da API (útil para ambientes dinâmicos)
  */
 export function setApiBaseUrl(url) {
+    API_BASE_URL = url;
     localStorage.setItem('API_BASE_URL', url);
-    console.log(`✅ API URL configurada: ${url}`);
+    console.log(`✅ API URL configurada para: ${url}`);
 }
 
 /**
