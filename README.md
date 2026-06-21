@@ -1,1 +1,96 @@
-Documentação Técnica: Projeto FiberNOC1. Visão GeralO FiberNOC é uma interface de monitoramento de ativos de rede (Dashboard) projetada para a gestão de infraestruturas FTTx. O foco principal da aplicação é a centralização de indicadores críticos, como níveis de sinal óptico e status de conectividade de equipamentos terminais (ONUs), permitindo uma resposta ágil a incidentes de rede.2. Funcionalidades de MonitoramentoDashboard Estatístico: Exibição quantitativa de equipamentos online, offline e volume de alertas pendentes.Análise de Camada Física: Monitoramento de potência de recepção (Rx Power) com sinalização de criticidade para valores inferiores a -25.00 dBm.Gestão de Inventário: Listagem detalhada de ativos com suporte a filtragem dinâmica por identificadores SN e MAC Address.Auditoria de Eventos: Registro cronológico (Logs) para rastreabilidade de falhas, como perdas de sinal (PON LOSS) e flutuações de potência.3. Arquitetura e TecnologiasA aplicação foi construída sob os preceitos de modularidade e clean code, utilizando as seguintes tecnologias:Front-End: HTML5 Semântico e CSS3 (Custom Properties, Flexbox e Grid).Lógica de Negócio: JavaScript ES6+ (Módulos e Programação Assíncrona).Camada de Dados: Integração com base de dados JSON via Fetch API para simular o comportamento de uma API REST real.4. Estrutura do RepositórioA organização dos arquivos separa a estrutura da aplicação da lógica de processamento de dados:Arquivo/DiretórioResponsabilidadelogin.htmlInterface de autenticação de operadores.index.htmlVisualização principal e indicadores de saúde da rede.style.cssDefinição global de estilos e responsividade da interface.js/api.jsAbstração de serviços para consumo de dados externos.js/main.jsOrquestração do Dashboard e atualização dinâmica do DOM.db.jsonPersistência de dados das ONUs e histórico de eventos.5. Instruções de ExecuçãoDevido ao uso de Módulos JavaScript (ES6), o projeto deve ser executado obrigatoriamente em um ambiente de servidor local para evitar restrições de segurança do navegador (CORS).Realize o clone do repositório.Abra o diretório raiz no editor Visual Studio Code.Execute o arquivo login.html através da extensão Live Server ou similar.Certifique-se de que o caminho para o arquivo db.json no módulo api.js esteja apontando corretamente para a origem dos dados.
+# FiberNOC API
+
+Esta API foi criada para servir como backend simples para o projeto **FiberNOC**, com foco em monitoramento de ONU.
+
+## Tecnologias
+- Node.js
+- Express
+- TypeScript
+- Vitest
+- Docker
+
+## Instalação
+
+```bash
+npm install
+```
+
+## Variáveis de ambiente
+
+Copie o arquivo de exemplo:
+
+```bash
+cp .env.example .env
+```
+
+Valores padrão:
+- `PORT=3000`
+- `NODE_ENV=development`
+- `DATABASE_URL="file:./dev.db"`
+
+## Execução em desenvolvimento
+
+```bash
+npm run dev
+```
+
+O servidor ficará disponível em:
+- http://localhost:3000
+
+## Banco de dados com Prisma
+
+Para criar o banco local e aplicar as migrações:
+
+```bash
+npm run db:migrate
+npm run db:seed
+```
+
+Para regenerar o cliente após mudanças no schema:
+
+```bash
+npm run db:generate
+```
+
+## Build para produção
+
+```bash
+npm run build
+```
+
+## Execução em produção
+
+```bash
+npm run start
+```
+
+## Testes
+
+```bash
+npm test
+```
+
+## Lint
+
+```bash
+npm run lint
+```
+
+## Docker
+
+### Build da imagem
+
+```bash
+docker build -t fibernoc-api .
+```
+
+### Rodar o container
+
+```bash
+docker run -p 3000:3000 --env-file .env fibernoc-api
+```
+
+## Endpoints principais
+- `GET /` → mensagem de boas-vindas
+- `GET /health` → status da aplicação
+- `GET /api/example` → exemplo de rota modularizada

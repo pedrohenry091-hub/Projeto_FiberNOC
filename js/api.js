@@ -1,17 +1,9 @@
 // js/api.js - API Client para Back-end Real
 
-// URL base da API (pode ser configurada via localStorage)
-let API_BASE_URL = localStorage.getItem('API_BASE_URL') || 'http://localhost:3000/api';
-
-// Se estiver em produção (sem localhost), tenta usar a variável de ambiente
-if (typeof process !== 'undefined' && process.env.REACT_APP_API_URL) {
-    API_BASE_URL = process.env.REACT_APP_API_URL;
-}
-
-console.log(`🔌 API conectada em: ${API_BASE_URL}`);
+let API_BASE_URL = '/api';
 
 /**
- * Função auxiliar para requisições HTTP com tratamento de erro
+ * Função auxiliar para requisições HTTP com tratamento de erro.
  */
 async function apiCall(endpoint, options = {}) {
     try {
@@ -38,22 +30,21 @@ async function apiCall(endpoint, options = {}) {
 }
 
 /**
- * Busca a lista de todas as ONUs
+ * Busca a lista de todas as ONUs.
  * GET /api/onus
  */
 export async function getOnus() {
     try {
         const data = await apiCall('/onus');
-        // Se a API retorna { data: [...] }, extrai o array
         return Array.isArray(data) ? data : data.data || [];
     } catch (error) {
-        console.error("Erro ao buscar ONUs:", error);
+        console.error('Erro ao buscar ONUs:', error);
         return [];
     }
 }
 
 /**
- * Busca uma ONU específica por ID
+ * Busca uma ONU específica por ID.
  * GET /api/onus/:id
  */
 export async function getOnuById(id) {
@@ -67,7 +58,7 @@ export async function getOnuById(id) {
 }
 
 /**
- * Atualiza o status de uma ONU
+ * Atualiza o status de uma ONU.
  * PUT /api/onus/:id
  */
 export async function updateOnuStatus(id, status) {
@@ -84,7 +75,7 @@ export async function updateOnuStatus(id, status) {
 }
 
 /**
- * Busca o histórico de eventos (Logs)
+ * Busca o histórico de eventos (logs).
  * GET /api/logs
  */
 export async function getLogs(params = {}) {
@@ -94,13 +85,13 @@ export async function getLogs(params = {}) {
         const data = await apiCall(endpoint);
         return Array.isArray(data) ? data : data.data || [];
     } catch (error) {
-        console.error("Erro ao buscar logs:", error);
+        console.error('Erro ao buscar logs:', error);
         return [];
     }
 }
 
 /**
- * Busca logs de uma ONU específica
+ * Busca logs de uma ONU específica.
  * GET /api/logs?onu=:nome
  */
 export async function getLogsByOnu(onuName) {
@@ -114,7 +105,7 @@ export async function getLogsByOnu(onuName) {
 }
 
 /**
- * Busca alertas recentes
+ * Busca alertas recentes.
  * GET /api/alerts
  */
 export async function getAlerts(limit = 6) {
@@ -122,13 +113,13 @@ export async function getAlerts(limit = 6) {
         const data = await apiCall(`/alerts?limit=${limit}`);
         return Array.isArray(data) ? data : data.data || [];
     } catch (error) {
-        console.error("Erro ao buscar alertas:", error);
+        console.error('Erro ao buscar alertas:', error);
         return [];
     }
 }
 
 /**
- * Busca estatísticas do dashboard
+ * Busca estatísticas do dashboard.
  * GET /api/stats
  */
 export async function getStats() {
@@ -136,22 +127,20 @@ export async function getStats() {
         const data = await apiCall('/stats');
         return data.data || data;
     } catch (error) {
-        console.error("Erro ao buscar estatísticas:", error);
+        console.error('Erro ao buscar estatísticas:', error);
         return { onlineCount: 0, offlineCount: 0, alertCount: 0 };
     }
 }
 
 /**
- * Define a URL da API (útil para ambientes dinâmicos)
+ * Define a URL da API (útil para ambientes dinâmicos).
  */
 export function setApiBaseUrl(url) {
     API_BASE_URL = url;
-    localStorage.setItem('API_BASE_URL', url);
-    console.log(`✅ API URL configurada para: ${url}`);
 }
 
 /**
- * Retorna a URL atual da API
+ * Retorna a URL atual da API.
  */
 export function getApiBaseUrl() {
     return API_BASE_URL;

@@ -1,0 +1,50 @@
+{
+  "name": "fibernoc-api",
+  "version": "1.0.0",
+  "private": true,
+  "description": "API Express para monitoramento de ONU do projeto FiberNOC",
+  "main": "dist/src/server.js",
+  "scripts": {
+    "install": "npm run build",
+    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "build": "tsc",
+    "start": "node dist/src/server.js",
+    "lint": "eslint src/**/*.ts tests/**/*.ts vitest.config.ts",
+    "test": "vitest run",
+    "db:migrate": "prisma migrate dev",
+    "db:generate": "prisma generate",
+    "db:seed": "prisma db seed"
+  },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
+  },
+  "dependencies": {
+    "@prisma/adapter-better-sqlite3": "^7.8.0",
+    "better-sqlite3": "^12.11.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.1",
+    "express": "^4.21.0",
+    "helmet": "^8.2.0",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.15.0",
+    "@prisma/client": "^7.8.0",
+    "@types/cors": "^2.8.0",
+    "@types/express": "^4.17.21",
+    "@types/morgan": "^1.9.0",
+    "@types/node": "^22.10.1",
+    "@types/supertest": "^6.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.21.0",
+    "@typescript-eslint/parser": "^8.21.0",
+    "eslint": "^9.15.0",
+    "eslint-config-prettier": "^9.0.0",
+    "prettier": "^3.3.0",
+    "prisma": "^7.8.0",
+    "supertest": "^7.0.0",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.7.0",
+    "vitest": "^2.1.0"
+  }
+}
