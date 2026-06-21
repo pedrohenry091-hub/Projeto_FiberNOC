@@ -5,8 +5,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FiberNOC - Dashboard</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-left: auto;
+        }
+        .user-info .username {
+            font-size: 14px;
+            color: #333;
+        }
+        .logout-btn {
+            background-color: #d32f2f;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        .logout-btn:hover {
+            background-color: #b71c1c;
+        }
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+    </style>
 </head>
 <body>
+
+<script src="js/auth.js"></script>
+<script>
+    // Proteger página - redirecionar se não autenticado
+    protectPage();
+</script>
 
 <aside class="sidebar" id="sidebar">
     <img src="logo.png" class="sidebar-logo" alt="Logo FiberNOC">
@@ -24,8 +60,14 @@
 
 <main class="main-content" id="main">
     <header>
-        <button class="menu-toggle" aria-label="Abrir menu">☰</button>
-        <h1>Dashboard</h1>
+        <div style="display: flex; align-items: center; gap: 20px;">
+            <button class="menu-toggle" aria-label="Abrir menu">☰</button>
+            <h1>Dashboard</h1>
+        </div>
+        <div class="user-info">
+            <span class="username" id="currentUser">👤 Usuário</span>
+            <button class="logout-btn" onclick="logout()">Sair</button>
+        </div>
     </header>
 
     <div class="top-cards">
@@ -59,10 +101,18 @@
         <div class="panel">
             <h2>Alertas Recentes</h2>
             <ul class="alerts" id="list-alerts">
-                </ul>
+            </ul>
         </div>
     </div>
 </main>
+
+<script type="module">
+    // Mostrar nome do usuário logado
+    const currentUser = getCurrentUser();
+    if (currentUser) {
+        document.getElementById('currentUser').textContent = `👤 ${currentUser}`;
+    }
+</script>
 
 <script type="module" src="js/main.js"></script>
 </body>
