@@ -1,0 +1,27 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Onu {
+  id     Int    @id @default(autoincrement())
+  nome   String
+  mac    String @unique
+  status String
+  sinal  Float
+  regiao String
+  olt    String
+  pon    String
+}
+
+model Log {
+  id      Int    @id @default(autoincrement())
+  data    String
+  onu     String
+  evento  String
+  detalhe String
+  tipo    String
+}
