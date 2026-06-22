@@ -1,9 +1,9 @@
 /**
  * Sistema de Autenticação FiberNOC
- * Gerencia login, logout e validação de sessão
+ * Gerencia login, logout e validação de sessão com integração de API
  */
 
-// Credenciais de teste (em produção, usar backend)
+// Credenciais de teste (fallback local se API não responder)
 const VALID_CREDENTIALS = {
   'admin': 'admin123',
   'fibernoc': 'senha456',
@@ -11,22 +11,53 @@ const VALID_CREDENTIALS = {
 };
 
 /**
- * Realiza o login do usuário
+ * Realiza o login do usuário via API
  * @param {string} username - Usuário
  * @param {string} password - Senha
- * @returns {boolean} - true se válido, false caso contrário
+ * @returns {Promise<boolean>} - true se válido, false caso contrário
  */
-function login(username, password) {
-  if (VALID_CREDENTIALS[username] && VALID_CREDENTIALS[username] === password) {
-    const sessionData = {
-      user: username,
-      loginTime: new Date().toISOString(),
-      token: generateToken()
-    };
-    localStorage.setItem('fibernoc_session', JSON.stringify(sessionData));
-    return true;
+async function login(username, password) {
+  try {
+    // Tenta fazer login via API
+    const response = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ username, password })
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    if (data.success) {
+      const sessionData = {
+        user: data.user,
+        loginTime: data.loginTime,
+        token: data.token
+      };
+      localStorage.setItem('fibernoc_session', JSON.stringify(sessionData));
+      return true;
+    }
+    return false;
+  } catch (error) {
+    console.warn("❌ API de login indisponível, usando fallback local:", error.message);
+    
+    // Fallback: validação local se API não responder
+    if (VALID_CREDENTIALS[username] && VALID_CREDENTIALS[username] === password) {
+      const sessionData = {
+        user: username,
+        loginTime: new Date().toISOString(),
+        token: generateToken()
+      };
+      localStorage.setItem('fibernoc_session', JSON.stringify(sessionData));
+      return true;
+    }
+    return false;
   }
-  return false;
 }
 
 /**

@@ -12,6 +12,7 @@
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -19,6 +20,12 @@ const PORT = process.env.PORT || 3000;
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
+
+// ========================================
+// SERVIR ARQUIVOS ESTÁTICOS (HTML, CSS, JS)
+// ========================================
+app.use(express.static(path.join(__dirname, '../html')));
+app.use(express.static(path.join(__dirname, '..')));
 
 // ========================================
 // DADOS EM MEMÓRIA (Substitua por BD Real)
@@ -242,6 +249,50 @@ app.get('/api/stats', (req, res) => {
         totalOnus: onus.length,
         totalLogs: logs.length
     });
+});
+
+// ========================================
+// AUTENTICAÇÃO
+// ========================================
+
+/**
+ * POST /api/auth/login
+ * Realiza login do usuário
+ */
+app.post('/api/auth/login', (req, res) => {
+    const { username, password } = req.body;
+    console.log('📡 POST /api/auth/login', { username });
+    
+    // Validação básica
+    if (!username || !password) {
+        return res.status(400).json({
+            error: 'Usuário e senha são obrigatórios.'
+        });
+    }
+    
+    // Credenciais válidas (padrão UNM2000)
+    const validUsers = {
+        'admin': 'admin123',
+        'fibernoc': 'senha456',
+        'tecnico': 'tecnico789'
+    };
+    
+    // Verificar credenciais
+    if (validUsers[username] && validUsers[username] === password) {
+        const token = `token_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        
+        res.json({
+            success: true,
+            user: username,
+            token,
+            loginTime: new Date().toISOString()
+        });
+    } else {
+        res.status(401).json({
+            success: false,
+            error: 'Usuário ou senha incorretos.'
+        });
+    }
 });
 
 // ========================================
