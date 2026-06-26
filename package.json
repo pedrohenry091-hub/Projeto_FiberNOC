@@ -4,47 +4,64 @@
   "private": true,
   "description": "API Express para monitoramento de ONU do projeto FiberNOC",
   "main": "dist/src/server.js",
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
-    "install": "npm run build",
-    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
-    "build": "tsc",
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc -p tsconfig.json && tsc-alias -p tsconfig.json",
     "start": "node dist/src/server.js",
-    "lint": "eslint src/**/*.ts tests/**/*.ts vitest.config.ts",
-    "test": "vitest run",
-    "db:migrate": "prisma migrate dev",
+    "mcp:dev": "tsx watch src/server.ts",
+    "mcp": "tsx src/server.ts",
     "db:generate": "prisma generate",
-    "db:seed": "prisma db seed"
+    "db:migrate": "prisma migrate dev",
+    "db:seed": "prisma db seed",
+    "db:drop": "prisma migrate reset --force",
+    "format": "prettier --write .",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src/**/*.ts tests/**/*.ts vitest.config.ts",
+    "test": "vitest run"
   },
   "prisma": {
-    "seed": "ts-node prisma/seed.ts"
+    "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
     "@prisma/adapter-better-sqlite3": "^7.8.0",
+    "@prisma/adapter-pg": "^7.8.0",
+    "@prisma/client": "^7.8.0",
     "better-sqlite3": "^12.11.1",
     "cors": "^2.8.5",
-    "dotenv": "^16.4.1",
-    "express": "^4.21.0",
+    "cuid": "^3.0.0",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
     "helmet": "^8.2.0",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.1",
+    "prisma": "^7.8.0",
+    "swagger-ui-express": "^5.0.1",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.15.0",
-    "@prisma/client": "^7.8.0",
     "@types/cors": "^2.8.0",
-    "@types/express": "^4.17.21",
-    "@types/morgan": "^1.9.0",
-    "@types/node": "^22.10.1",
-    "@types/supertest": "^6.0.0",
+    "@types/express": "^5.0.6",
+    "@types/morgan": "^1.9.10",
+    "@types/node": "^22.19.20",
+    "@types/supertest": "^7.2.0",
+    "@types/swagger-ui-express": "^4.1.8",
     "@typescript-eslint/eslint-plugin": "^8.21.0",
     "@typescript-eslint/parser": "^8.21.0",
     "eslint": "^9.15.0",
     "eslint-config-prettier": "^9.0.0",
-    "prettier": "^3.3.0",
-    "prisma": "^7.8.0",
-    "supertest": "^7.0.0",
+    "jsdom": "^29.1.1",
+    "prettier": "^3.6.2",
+    "supertest": "^7.2.2",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^5.7.0",
-    "vitest": "^2.1.0"
+    "tsc-alias": "^1.8.17",
+    "tsx": "^4.22.4",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.7"
   }
 }
