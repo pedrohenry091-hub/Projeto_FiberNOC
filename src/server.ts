@@ -4,10 +4,8 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
 import path from 'path';
-import { pathToFileURL } from 'url';
-
 import apiRoutes from './routes/api.js';
-import prisma from './lib/prisma.js';
+import prisma from './database/database.js';
 
 dotenv.config();
 
@@ -15,7 +13,11 @@ const app = express();
 const PORT = Number(process.env.PORT || 3000);
 const NODE_ENV = process.env.NODE_ENV || 'development';
 
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+  })
+);
 app.use(
   cors({
     origin: process.env.CORS_ORIGIN || '*'
@@ -29,6 +31,7 @@ app.get('/', (_req: Request, res: Response) => {
   res.sendFile(path.join(process.cwd(), 'html', 'index.html'));
 });
 
+app.use(express.static(path.join(process.cwd(), 'public')));
 app.use(express.static(path.join(process.cwd(), 'html')));
 app.use(express.static(process.cwd()));
 
@@ -76,7 +79,7 @@ const startServer = async () => {
   });
 };
 
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+if (process.argv[1] && process.argv[1].endsWith('server.ts')) {
   void startServer();
 }
 

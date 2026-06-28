@@ -1,6 +1,6 @@
 // js/onus.js - Página de ONUs com integração de API real
 
-import { createOnu, getOnus } from './api.js';
+import { getOnus } from './api.js';
 
 let allOnus = [];
 
@@ -61,40 +61,6 @@ function setupSidebar() {
     }
 }
 
-function showMessage(message, type = 'success') {
-    const el = document.getElementById('addOnuMessage');
-    if (!el) return;
-    el.textContent = message;
-    el.style.color = type === 'error' ? '#b91c1c' : '#0f766e';
-}
-
-async function handleAddOnu(event) {
-    event.preventDefault();
-
-    const form = event.currentTarget;
-    const data = Object.fromEntries(new FormData(form).entries());
-
-    const payload = {
-        nome: data.nome,
-        mac: data.mac,
-        status: data.status || 'offline',
-        sinal: Number(data.sinal ?? -30),
-        regiao: data.regiao || 'Sem região',
-        olt: data.olt || 'OLT-PADRÃO',
-        pon: data.pon || 'PON 1'
-    };
-
-    const created = await createOnu(payload);
-    if (created) {
-        allOnus = [created, ...allOnus];
-        renderTable(allOnus);
-        form.reset();
-        showMessage('ONU cadastrada com sucesso.');
-    } else {
-        showMessage('Não foi possível cadastrar a ONU.', 'error');
-    }
-}
-
 /**
  * Inicializa a página
  */
@@ -112,11 +78,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     setupSidebar();
-
-    const formAddOnu = document.getElementById('formAddOnu');
-    if (formAddOnu) {
-        formAddOnu.addEventListener('submit', handleAddOnu);
-    }
 
     // Configura filtro de busca
     const searchInput = document.getElementById('searchInput');

@@ -1,0 +1,222 @@
+/* --- VARIÁVEIS DO SISTEMA (PADRÃO UNM2000) --- */
+:root {
+    --primary: #0f172a;    /* Azul Escuro da Barra Lateral */
+    --secondary: #1e293b;  /* Azul de Destaque */
+    --accent: #3b82f6;     /* Azul de Interação */
+    --success: #22c55e;    /* Online */
+    --danger: #ef4444;     /* Offline */
+    --warning: #f59e0b;    /* Sinal Crítico / Alerta */
+    --sidebar-width: 240px;
+}
+
+/* --- ESTRUTURA BASE --- */
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f1f5f9;
+    color: #1e293b;
+    display: flex; /* Mantém sidebar e conteúdo principal lado a lado */
+    min-height: 100vh;
+}
+
+/* --- BARRA LATERAL (SIDEBAR) --- */
+.sidebar {
+    width: var(--sidebar-width);
+    background: var(--primary);
+    color: white;
+    height: 100vh;
+    position: fixed; /* Fixa para não sumir no scroll */
+    left: 0;
+    top: 0;
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+/* CORREÇÃO DEFINITIVA DA LOGO */
+.sidebar-logo {
+    width: 120px;           /* Tamanho controlado para não cobrir a tela */
+    height: auto;
+    display: block;
+    margin: 25px auto;      /* Centraliza com respiro */
+    filter: drop-shadow(0 0 5px rgba(255,255,255,0.1));
+}
+
+.sidebar h3 {
+    text-align: center;
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+    color: var(--accent);
+    letter-spacing: 1px;
+}
+
+.sidebar nav a {
+    display: block;
+    color: #cbd5e1;
+    padding: 12px 25px;
+    text-decoration: none;
+    border-left: 4px solid transparent;
+    transition: 0.2s;
+}
+
+.sidebar nav a:hover {
+    background: var(--secondary);
+    color: white;
+    border-left-color: var(--accent);
+}
+
+/* --- CONTEÚDO PRINCIPAL (MAIN) --- */
+.main-content {
+    flex-grow: 1;
+    margin-left: var(--sidebar-width); /* Reserva espaço para a sidebar */
+    padding: 30px;
+    width: calc(100% - var(--sidebar-width));
+    box-sizing: border-box;
+}
+
+/* Ajustes para quando o menu for recolhido via JS */
+.sidebar.collapsed { width: 0; overflow: hidden; }
+.main-content.expanded { margin-left: 0; width: 100%; }
+
+/* --- DASHBOARD: CARDS DE STATUS --- */
+.top-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.mini-card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+    border-left: 6px solid #cbd5e1;
+}
+
+.mini-card.online { border-left-color: var(--success); }
+.mini-card.offline { border-left-color: var(--danger); }
+.mini-card.alert { border-left-color: var(--warning); }
+
+.mini-card span { font-size: 0.85rem; color: #64748b; display: block; }
+.mini-card strong { font-size: 1.8rem; font-weight: bold; color: var(--primary); }
+
+/* --- TABELAS --- */
+.table-container {
+    background: white;
+    border-radius: 12px;
+    overflow-x: auto;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.onu-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.onu-table th {
+    background: #f8fafc;
+    padding: 15px;
+    text-align: left;
+    border-bottom: 2px solid #e2e8f0;
+    color: #475569;
+}
+
+.onu-table td {
+    padding: 15px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+/* --- BADGES E ÍCONES --- */
+.badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+.badge.online { background: #dcfce7; color: #166534; }
+.badge.offline { background: #fee2e2; color: #991b1b; }
+
+/* --- ALERTA LISTA (DASHBOARD) --- */
+.alert-list { list-style: none; padding: 0; }
+.alert-item {
+    padding: 12px;
+    border-bottom: 1px solid #f1f5f9;
+    border-left: 4px solid transparent;
+}
+.alert-item.error { border-left-color: var(--danger); }
+.alert-item.warning { border-left-color: var(--warning); }
+
+/* --- HEADER E BOTÕES --- */
+header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.menu-toggle {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+/* --- CORREÇÃO DA TELA DE LOGIN (SEM QUEBRAR O PROJETO) --- */
+
+/* Quando o body tiver a classe login-body, ele anula o flex lateral */
+body.login-body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--primary); /* Fundo azul escuro profissional */
+    height: 100vh;
+    width: 100vw;
+    margin: 0;
+}
+
+/* Container do Login */
+.login-container {
+    background: white;
+    padding: 40px;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 360px; /* Não deixa ficar gigante no notebook */
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    margin-left: 0; /* Remove margem da sidebar no login */
+}
+
+/* Logo específica do Login */
+.login-logo {
+    width: 150px; /* Um pouco maior que a da sidebar */
+    height: auto;
+    margin-bottom: 20px;
+}
+
+/* Ajuste nos inputs para ficarem bonitos */
+.login-container input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    box-sizing: border-box; /* Garante que o padding não estoure a largura */
+}
+
+.login-container button {
+    width: 100%;
+    padding: 12px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.login-container button:hover {
+    background: #2563eb;
+}

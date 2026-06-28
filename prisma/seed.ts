@@ -1,4 +1,6 @@
-import prisma from '../src/lib/prisma.js';
+import { PrismaClient } from '../src/generated/prisma/client.js';
+
+const prisma = new PrismaClient();
 
 const main = async () => {
   await prisma.log.deleteMany();
@@ -7,7 +9,6 @@ const main = async () => {
   await prisma.onu.createMany({
     data: [
       {
-        id: 1,
         nome: 'CLIENTE_01',
         mac: 'FHTT00A1B2C3',
         status: 'online',
@@ -17,7 +18,6 @@ const main = async () => {
         pon: 'PON 1'
       },
       {
-        id: 2,
         nome: 'CLIENTE_02',
         mac: 'FHTT00C3D4E5',
         status: 'offline',
@@ -27,7 +27,6 @@ const main = async () => {
         pon: 'PON 3'
       },
       {
-        id: 3,
         nome: 'CLIENTE_03',
         mac: 'FHTT00E5F6G7',
         status: 'online',
@@ -35,6 +34,15 @@ const main = async () => {
         regiao: 'Joao Pessoa',
         olt: 'OLT-MANAIRA-01',
         pon: 'PON 2'
+      },
+      {
+        nome: 'CLIENTE_04',
+        mac: 'FHTT00H8I9J0',
+        status: 'warning',
+        sinal: -27.4,
+        regiao: 'Santa Rita',
+        olt: 'OLT-LITORAL-03',
+        pon: 'PON 4'
       }
     ]
   });
@@ -42,7 +50,6 @@ const main = async () => {
   await prisma.log.createMany({
     data: [
       {
-        id: 1,
         data: '2026-05-06 10:15:30',
         onu: 'CLIENTE_02',
         evento: 'PON_LOSS',
@@ -50,7 +57,6 @@ const main = async () => {
         tipo: 'error'
       },
       {
-        id: 2,
         data: '2026-05-06 09:40:12',
         onu: 'CLIENTE_01',
         evento: 'POWER_OFF',
@@ -58,12 +64,18 @@ const main = async () => {
         tipo: 'warning'
       },
       {
-        id: 3,
         data: '2026-05-06 08:20:05',
         onu: 'CLIENTE_03',
         evento: 'CONFIG_CHG',
         detalhe: 'Alteração de Profile de banda efetuada.',
         tipo: 'info'
+      },
+      {
+        data: '2026-05-06 11:00:00',
+        onu: 'CLIENTE_04',
+        evento: 'SINAL_BAIXO',
+        detalhe: 'Sinal abaixo do limite recomendado.',
+        tipo: 'warning'
       }
     ]
   });
