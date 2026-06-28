@@ -75,6 +75,23 @@ export async function updateOnuStatus(id, status) {
 }
 
 /**
+ * Cadastra uma nova ONU.
+ * POST /api/onus
+ */
+export async function createOnu(payload) {
+    try {
+        const data = await apiCall('/onus', {
+            method: 'POST',
+            body: JSON.stringify(payload),
+        });
+        return data.data || data;
+    } catch (error) {
+        console.error('Erro ao cadastrar ONU:', error);
+        return null;
+    }
+}
+
+/**
  * Busca o histórico de eventos (logs).
  * GET /api/logs
  */

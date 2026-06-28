@@ -1,5 +1,13 @@
 import { Router, Request, Response } from 'express';
-import prisma from '../lib/prisma.js';
+import prisma from '../database/database.js';
+import {
+  createFallbackOnu,
+  getFallbackLogs,
+  getFallbackOnuById,
+  getFallbackOnus,
+  getFallbackStats,
+  updateFallbackOnu
+} from '../lib/onu-store.js';
 
 const router = Router();
 
@@ -11,114 +19,60 @@ router.get('/example', (_req: Request, res: Response) => {
 });
 
 router.get('/onus', async (_req: Request, res: Response) => {
-  try {
-    const onus = await prisma.onu.findMany({
-      orderBy: { id: 'asc' }
-    });
-
-    res.json(onus);
-  } catch (error) {
-    res.status(500).json({
-      error: 'Não foi possível carregar os dados das ONUs.'
-    });
-  }
+  res.json(getFallbackOnus());
 });
 
 router.get('/onus/:id', async (req: Request, res: Response) => {
-  try {
-    const onu = await prisma.onu.findUnique({
-      where: { id: Number(req.params.id) }
-    });
-
-    if (!onu) {
-      res.status(404).json({ error: 'ONU não encontrada.' });
-      return;
-    }
-
-    res.json(onu);
-  } catch (error) {
-    res.status(500).json({
-      error: 'Não foi possível carregar os dados da ONU.'
-    });
+  const fallback = getFallbackOnuById(Number(req.params.id));
+  if (!fallback) {
+    res.status(404).json({ error: 'ONU não encontrada.' });
+    return;
   }
+  res.json(fallback);
+});
+
+router.post('/onus', async (req: Request, res: Response) => {
+  const { nome, mac } = req.body;
+
+  if (!nome || !mac) {
+    res.status(400).json({ error: 'Nome e MAC são obrigatórios.' });
+    return;
+  }
+
+  const created = createFallbackOnu(req.body);
+  res.status(201).json(created);
+});
+
+router.put('/onus/:id', async (req: Request, res: Response) => {
+  const updated = updateFallbackOnu(Number(req.params.id), req.body);
+  if (!updated) {
+    res.status(404).json({ error: 'ONU não encontrada.' });
+    return;
+  }
+  res.json(updated);
 });
 
 router.get('/logs', async (_req: Request, res: Response) => {
-  try {
-    const logs = await prisma.log.findMany({
-      orderBy: { id: 'asc' }
-    });
-
-    res.json(logs);
-  } catch (error) {
-    res.status(500).json({
-      error: 'Não foi possível carregar os logs.'
-    });
-  }
+  res.json(getFallbackLogs(20));
 });
 
 router.get('/summary', async (_req: Request, res: Response) => {
-  try {
-    const [onus, logs] = await Promise.all([
-      prisma.onu.findMany(),
-      prisma.log.findMany()
-    ]);
+  const stats = getFallbackStats();
+  const logs = getFallbackLogs(50);
 
-    const online = onus.filter((onu: { status: string }) => onu.status === 'online').length;
-    const offline = onus.filter((onu: { status: string }) => onu.status === 'offline').length;
-
-    res.json({
-      totalOnus: onus.length,
-      online,
-      offline,
-      totalLogs: logs.length,
-      alertasCriticos: logs.filter((log: { tipo: string }) => log.tipo === 'error' || log.tipo === 'warning').length
-    });
-  } catch (error) {
-    res.status(500).json({
-      error: 'Não foi possível gerar o resumo.'
-    });
-  }
+  res.json({
+    ...stats,
+    totalLogs: logs.length,
+    alertasCriticos: logs.filter((log: { tipo: string }) => log.tipo === 'error' || log.tipo === 'warning').length
+  });
 });
 
 router.get('/stats', async (_req: Request, res: Response) => {
-  try {
-    const [onus, logs] = await Promise.all([
-      prisma.onu.findMany(),
-      prisma.log.findMany()
-    ]);
-
-    const onlineCount = onus.filter((onu: { status: string }) => onu.status === 'online').length;
-    const offlineCount = onus.filter((onu: { status: string }) => onu.status === 'offline').length;
-    const alertCount = logs.filter((log: { tipo: string }) => log.tipo === 'error' || log.tipo === 'warning').length;
-
-    res.json({
-      onlineCount,
-      offlineCount,
-      alertCount,
-      totalOnus: onus.length
-    });
-  } catch (error) {
-    res.status(500).json({
-      error: 'Não foi possível carregar as estatísticas.'
-    });
-  }
+  res.json(getFallbackStats());
 });
 
 router.get('/alerts', async (req: Request, res: Response) => {
-  try {
-    const limit = parseInt(req.query.limit as string) || 6;
-    const alerts = await prisma.log.findMany({
-      orderBy: { id: 'desc' },
-      take: limit
-    });
-
-    res.json(alerts);
-  } catch (error) {
-    res.status(500).json({
-      error: 'Não foi possível carregar os alertas.'
-    });
-  }
+  res.json(getFallbackLogs(Number(req.query.limit as string) || 6));
 });
 
 router.post('/auth/login', async (req: Request, res: Response) => {
