@@ -4,9 +4,10 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
 import path from 'path';
+import { pathToFileURL } from 'url';
 
-import apiRoutes from './routes/api';
-import prisma from './lib/prisma';
+import apiRoutes from './routes/api.js';
+import prisma from './lib/prisma.js';
 
 dotenv.config();
 
@@ -75,7 +76,7 @@ const startServer = async () => {
   });
 };
 
-if (require.main === module) {
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   void startServer();
 }
 
