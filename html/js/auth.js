@@ -17,23 +17,20 @@ const VALID_CREDENTIALS = {
  * @returns {Promise<boolean>} - true se válido, false caso contrário
  */
 async function login(username, password) {
+  const normalizedUsername = (username || '').trim();
+
   try {
-    // Tenta fazer login via API
     const response = await fetch('/api/auth/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ username, password })
+      body: JSON.stringify({ username: normalizedUsername, password })
     });
 
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
-    }
+    const data = await response.json().catch(() => ({}));
 
-    const data = await response.json();
-
-    if (data.success) {
+    if (response.ok && data.success) {
       const sessionData = {
         user: data.user,
         loginTime: data.loginTime,
@@ -42,22 +39,21 @@ async function login(username, password) {
       localStorage.setItem('fibernoc_session', JSON.stringify(sessionData));
       return true;
     }
-    return false;
   } catch (error) {
-    console.warn("❌ API de login indisponível, usando fallback local:", error.message);
-    
-    // Fallback: validação local se API não responder
-    if (VALID_CREDENTIALS[username] && VALID_CREDENTIALS[username] === password) {
-      const sessionData = {
-        user: username,
-        loginTime: new Date().toISOString(),
-        token: generateToken()
-      };
-      localStorage.setItem('fibernoc_session', JSON.stringify(sessionData));
-      return true;
-    }
-    return false;
+    console.warn('❌ API de login indisponível, usando fallback local:', error);
   }
+
+  if (VALID_CREDENTIALS[normalizedUsername] && VALID_CREDENTIALS[normalizedUsername] === password) {
+    const sessionData = {
+      user: normalizedUsername,
+      loginTime: new Date().toISOString(),
+      token: generateToken()
+    };
+    localStorage.setItem('fibernoc_session', JSON.stringify(sessionData));
+    return true;
+  }
+
+  return false;
 }
 
 /**

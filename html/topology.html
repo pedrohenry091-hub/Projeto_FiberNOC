@@ -5,24 +5,609 @@
     <title>FiberNOC - Topologia OLT</title>
     <link rel="stylesheet" href="../style.css">
     <style>
-        .rack-olt { background: #334155; padding: 10px; border-radius: 5px; display: flex; gap: 5px; }
-        .slot { width: 40px; height: 150px; background: #475569; border: 1px solid #94a3b8; color: white; writing-mode: vertical-rl; text-align: center; font-size: 10px; }
-        .slot.active { background: #16a34a; }
+        body {
+            background: linear-gradient(135deg, #0f172a, #111827);
+            color: #e2e8f0;
+        }
+        .topology-shell {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+        .olt-card {
+            background: #111827;
+            border: 1px solid #334155;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+        }
+        .olt-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+        .olt-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+        .olt-badge {
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: #1d4ed8;
+            color: white;
+            font-size: 0.85rem;
+        }
+        .rack-olt {
+            display: grid;
+            grid-template-columns: repeat(7, minmax(90px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .slot {
+            background: #1f2937;
+            border: 1px solid #475569;
+            border-radius: 12px;
+            padding: 12px 8px;
+            min-height: 150px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            color: #f8fafc;
+        }
+        .slot.active {
+            background: linear-gradient(180deg, #14532d, #166534);
+            border-color: #4ade80;
+        }
+        .slot.inactive {
+            opacity: 0.6;
+        }
+        .slot.selected,
+        .pon-card.selected {
+            outline: 2px solid #38bdf8;
+            box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+        }
+        .slot-count {
+            margin-top: 6px;
+            font-size: 0.72rem;
+            color: #bfdbfe;
+        }
+        .slot-label {
+            font-size: 0.82rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .slot-type {
+            font-size: 0.8rem;
+            color: #cbd5e1;
+        }
+        .slot-status {
+            font-size: 0.74rem;
+            color: #dcfce7;
+            font-weight: 600;
+        }
+        .pon-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px;
+        }
+        .detail-panel,
+        .onu-panel {
+            margin-top: 18px;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 14px;
+            padding: 16px;
+        }
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        .panel-header h3 {
+            margin: 0 0 4px;
+            font-size: 1rem;
+        }
+        .panel-header p {
+            margin: 0;
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+        .status-text {
+            color: #38bdf8;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        .pon-card {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 12px;
+            text-align: left;
+            cursor: pointer;
+        }
+        .pon-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .pon-name {
+            font-weight: 700;
+            color: #f8fafc;
+        }
+        .pon-badge {
+            font-size: 0.78rem;
+            padding: 4px 8px;
+            border-radius: 999px;
+            background: #1e293b;
+            color: #bfdbfe;
+        }
+        .onu-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .onu-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 10px;
+            border-radius: 8px;
+            background: #111827;
+            font-size: 0.9rem;
+            gap: 8px;
+        }
+        .onu-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-details {
+            border: none;
+            border-radius: 999px;
+            padding: 5px 10px;
+            background: #1d4ed8;
+            color: white;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .onu-meta {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            margin-top: 2px;
+        }
+        .empty-state {
+            padding: 12px;
+            border-radius: 10px;
+            color: #cbd5e1;
+            background: #111827;
+            border: 1px dashed #334155;
+        }
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(2, 6, 23, 0.78);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 50;
+        }
+        .modal-backdrop.hidden {
+            display: none;
+        }
+        .modal-card {
+            background: #111827;
+            border: 1px solid #334155;
+            border-radius: 14px;
+            width: min(480px, 100%);
+            padding: 18px;
+            box-shadow: 0 12px 34px rgba(0,0,0,0.35);
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .modal-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .detail-item {
+            background: #0f172a;
+            border: 1px solid #1e293b;
+            border-radius: 10px;
+            padding: 10px;
+        }
+        .detail-item strong {
+            display: block;
+            font-size: 0.8rem;
+            color: #94a3b8;
+            margin-bottom: 4px;
+        }
+        .onu-item.online { border-left: 3px solid #22c55e; }
+        .onu-item.offline { border-left: 3px solid #ef4444; }
+        .onu-item.warning { border-left: 3px solid #f59e0b; }
+        .onu-chip {
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            padding: 3px 7px;
+            border-radius: 999px;
+            background: #334155;
+        }
+        .btn-back {
+            margin-top: 18px;
+        }
     </style>
 </head>
 <body>
-    <div id="main" class="main-content" style="margin-left: 0; padding: 40px;">
-        <h2>Chassi AN5516-01</h2>
-        <div class="rack-olt">
-            <div class="slot">SLOT 1 (PWR)</div>
-            <div class="slot active">SLOT 2 (GC8B)</div>
-            <div class="slot active">SLOT 3 (GC8B)</div>
-            <div class="slot">SLOT 4 (Vago)</div>
-            <div class="slot active">SLOT 5 (HSWA)</div>
-            <div class="slot active">SLOT 6 (HSWA)</div>
-            <div class="slot">SLOT 7 (Vago)</div>
+    <aside class="sidebar collapsed" id="sidebar">
+        <img src="../logo.png" class="sidebar-logo" alt="Logo FiberNOC">
+        <h3>FiberNOC</h3>
+        <nav>
+            <a href="index.html"><strong>Dashboard</strong></a>
+            <a href="topology.html"><strong>Topologia (OLT)</strong></a>
+            <a href="onu.html"><strong>ONUs</strong></a>
+            <a href="unauthorized.html"><strong>ONUs não autorizadas</strong></a>
+            <a href="critical_signals.html"><strong>Sinal Crítico</strong></a>
+            <a href="logs.html"><strong>Logs de Eventos</strong></a>
+        </nav>
+    </aside>
+
+    <main class="main-content expanded" id="main">
+        <header>
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <button class="menu-toggle" aria-label="Abrir menu">☰</button>
+                <h1>Topologia OLT</h1>
+            </div>
+        </header>
+
+        <div class="topology-shell">
+            <div class="olt-card">
+                <div class="olt-header">
+                    <div>
+                        <div class="olt-title">Chassi AN5516-01</div>
+                        <div style="color:#94a3b8; font-size: 0.95rem;">OLT principal · clique em um slot para ver as PONs e em uma PON para ver as ONUs</div>
+                    </div>
+                    <div class="olt-badge">Operação normal</div>
+                </div>
+
+                <div id="slotsContainer" class="rack-olt"></div>
+
+                <div class="detail-panel">
+                    <div class="panel-header">
+                        <div>
+                            <h3 id="panelTitle">Selecione um slot</h3>
+                            <p id="panelText">Ao clicar em um slot, as PONs disponíveis aparecerão aqui.</p>
+                        </div>
+                        <div id="statusText" class="status-text">Carregando dados da OLT...</div>
+                    </div>
+                    <div id="ponContainer" class="pon-grid"></div>
+                </div>
+
+                <div class="onu-panel">
+                    <div class="panel-header">
+                        <div>
+                            <h3 id="onuTitle">ONUs da PON</h3>
+                            <p id="onuText">Selecione uma PON para listar as ONUs alocadas.</p>
+                        </div>
+                    </div>
+                    <div id="onuList" class="onu-list"></div>
+                </div>
+            </div>
         </div>
-        <button onclick="history.back()" style="margin-top: 20px;">Voltar</button>
+    </main>
+
+    <div id="detailsModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-label="Detalhes da ONU">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 id="modalTitle">Detalhes da ONU</h3>
+                <button id="closeModalBtn" class="btn-details" type="button">Fechar</button>
+            </div>
+            <div id="modalContent" class="modal-grid"></div>
+        </div>
     </div>
+
+    <script>
+        const SLOT_LAYOUT = [
+            { number: 1, type: 'PWR', status: 'Reservado', state: 'inactive' },
+            { number: 2, type: 'GC8B', status: 'Ativo', state: 'active' },
+            { number: 3, type: 'GC8B', status: 'Ativo', state: 'active' },
+            { number: 4, type: 'Vago', status: 'Livre', state: 'inactive' },
+            { number: 5, type: 'HSWA', status: 'Ativo', state: 'active' },
+            { number: 6, type: 'HSWA', status: 'Ativo', state: 'active' },
+            { number: 7, type: 'Vago', status: 'Livre', state: 'inactive' }
+        ];
+
+        const fallbackOnus = [
+            { nome: 'CLIENTE_01', status: 'online', pon: 'PON 1', mac: '00:11:22:33:44:55' },
+            { nome: 'CLIENTE_04', status: 'warning', pon: 'PON 1', mac: '00:11:22:33:44:56' },
+            { nome: 'CLIENTE_03', status: 'online', pon: 'PON 2', mac: '00:11:22:33:44:57' },
+            { nome: 'CLIENTE_02', status: 'offline', pon: 'PON 3', mac: '00:11:22:33:44:58' }
+        ];
+
+        let topologySlots = [];
+        let selectedSlot = 2;
+        let selectedPon = null;
+        let selectedOnu = null;
+
+        function normalizeStatus(status = 'offline') {
+            return String(status).toLowerCase();
+        }
+
+        function resolveSlotForPon(ponName) {
+            const match = String(ponName || '').match(/(\d+)/);
+            const number = match ? Number(match[1]) : null;
+            const map = { 1: 2, 2: 3, 3: 5, 4: 6 };
+            return map[number] || 2;
+        }
+
+        function buildTopologyData(onus) {
+            const slots = SLOT_LAYOUT.map((slot) => ({ ...slot, pons: [] }));
+            const slotIndex = new Map(slots.map((slot) => [slot.number, slot]));
+
+            const sourceOnus = Array.isArray(onus) && onus.length > 0 ? onus : fallbackOnus;
+
+            sourceOnus.forEach((onu) => {
+                const ponName = onu.pon || 'PON 1';
+                const slotNumber = resolveSlotForPon(ponName);
+                const slot = slotIndex.get(slotNumber) || slotIndex.get(2);
+                if (!slot) return;
+
+                const existingPon = slot.pons.find((pon) => pon.name === ponName);
+                if (existingPon) {
+                    existingPon.onus.push(onu);
+                } else {
+                    slot.pons.push({ name: ponName, onus: [onu] });
+                }
+            });
+
+            return slots;
+        }
+
+        function getOnuDetails(onu) {
+            const ponMatch = String(onu.pon || 'PON 1').match(/(\d+)/);
+            const ponNumber = ponMatch ? Number(ponMatch[1]) : 1;
+            const signal = Number(onu.sinal);
+            const vlan = 100 + ponNumber;
+
+            return {
+                nome: onu.nome || 'ONU sem nome',
+                mac: onu.mac || 'Não informado',
+                sinal: Number.isFinite(signal) ? `${signal.toFixed(1)} dBm` : 'Não informado',
+                vlan: `VLAN ${vlan}`,
+                porta: `ONT-${ponNumber}`,
+                olt: onu.olt || 'OLT principal',
+                regiao: onu.regiao || 'Sem região',
+                status: String(onu.status || 'offline').toUpperCase(),
+                pon: onu.pon || `PON ${ponNumber}`
+            };
+        }
+
+        function renderSlots() {
+            const container = document.getElementById('slotsContainer');
+            container.innerHTML = '';
+
+            topologySlots.forEach((slot) => {
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = `slot ${slot.state} ${slot.number === selectedSlot ? 'selected' : ''}`;
+                button.dataset.slot = slot.number;
+                button.innerHTML = `
+                    <span class="slot-label">Slot ${slot.number}</span>
+                    <span class="slot-type">${slot.type}</span>
+                    <span class="slot-status">${slot.status}</span>
+                    <span class="slot-count">${slot.pons.length} PON</span>
+                `;
+                container.appendChild(button);
+            });
+        }
+
+        function renderPons() {
+            const container = document.getElementById('ponContainer');
+            const title = document.getElementById('panelTitle');
+            const text = document.getElementById('panelText');
+            const slot = topologySlots.find((item) => item.number === selectedSlot);
+
+            if (!slot) {
+                container.innerHTML = '';
+                title.textContent = 'Nenhum slot selecionado';
+                text.textContent = 'Selecione um slot para ver as PONs disponíveis.';
+                return;
+            }
+
+            title.textContent = `Slot ${slot.number} · PONs disponíveis`;
+            text.textContent = `Este slot possui ${slot.pons.length} PONs com ONUs associadas.`;
+            container.innerHTML = '';
+
+            if (!slot.pons.length) {
+                container.innerHTML = '<div class="empty-state">Nenhuma PON disponível para este slot no momento.</div>';
+                selectedPon = null;
+                renderOnus();
+                return;
+            }
+
+            slot.pons.forEach((pon) => {
+                const card = document.createElement('button');
+                card.type = 'button';
+                card.className = `pon-card ${selectedPon === pon.name ? 'selected' : ''}`;
+                card.dataset.pon = pon.name;
+                card.innerHTML = `
+                    <div class="pon-header">
+                        <span class="pon-name">${pon.name}</span>
+                        <span class="pon-badge">${pon.onus.length} ONU</span>
+                    </div>
+                    <ul class="onu-list compact">
+                        ${pon.onus.slice(0, 3).map((onu) => `<li class="onu-item ${normalizeStatus(onu.status)}"><span>${onu.nome}</span><span class="onu-chip">${normalizeStatus(onu.status)}</span></li>`).join('')}
+                    </ul>
+                `;
+                container.appendChild(card);
+            });
+
+            if (!selectedPon) {
+                selectedPon = slot.pons[0].name;
+            }
+            renderOnus();
+        }
+
+        function renderOnus() {
+            const title = document.getElementById('onuTitle');
+            const text = document.getElementById('onuText');
+            const list = document.getElementById('onuList');
+            const slot = topologySlots.find((item) => item.number === selectedSlot);
+            const pon = slot?.pons.find((item) => item.name === selectedPon);
+
+            if (!slot || !pon) {
+                title.textContent = 'ONUs da PON';
+                text.textContent = 'Selecione uma PON para listar as ONUs alocadas.';
+                list.innerHTML = '<div class="empty-state">Nenhuma ONU para exibir.</div>';
+                return;
+            }
+
+            title.textContent = `${pon.name} · ONUs alocadas`;
+            text.textContent = `Total de ONUs na ${pon.name}: ${pon.onus.length}`;
+            list.innerHTML = '';
+
+            if (!pon.onus.length) {
+                list.innerHTML = '<div class="empty-state">Não há ONUs alocadas a esta PON.</div>';
+                return;
+            }
+
+            const fragment = document.createDocumentFragment();
+            pon.onus.forEach((onu) => {
+                const item = document.createElement('div');
+                item.className = `onu-item ${normalizeStatus(onu.status)}`;
+                item.innerHTML = `
+                    <div>
+                        <strong>${onu.nome}</strong>
+                        <div class="onu-meta">${onu.mac || 'Sem MAC'}</div>
+                    </div>
+                    <div class="onu-actions">
+                        <span class="onu-chip">${normalizeStatus(onu.status)}</span>
+                        <button class="btn-details" type="button" data-onu-name="${onu.nome}">Ver info</button>
+                    </div>
+                `;
+                fragment.appendChild(item);
+            });
+            list.appendChild(fragment);
+        }
+
+        function openDetailsModal(onuName) {
+            const slot = topologySlots.find((item) => item.number === selectedSlot);
+            const pon = slot?.pons.find((item) => item.name === selectedPon);
+            const onu = pon?.onus.find((item) => item.nome === onuName);
+
+            if (!onu) {
+                return;
+            }
+
+            selectedOnu = onu;
+            const details = getOnuDetails(onu);
+            document.getElementById('modalTitle').textContent = details.nome;
+            document.getElementById('modalContent').innerHTML = `
+                <div class="detail-item"><strong>MAC</strong><span>${details.mac}</span></div>
+                <div class="detail-item"><strong>Sinal da fibra</strong><span>${details.sinal}</span></div>
+                <div class="detail-item"><strong>VLAN da porta</strong><span>${details.vlan}</span></div>
+                <div class="detail-item"><strong>Porta / Interface</strong><span>${details.porta}</span></div>
+                <div class="detail-item"><strong>OLT</strong><span>${details.olt}</span></div>
+                <div class="detail-item"><strong>Região</strong><span>${details.regiao}</span></div>
+                <div class="detail-item"><strong>PON</strong><span>${details.pon}</span></div>
+                <div class="detail-item"><strong>Status</strong><span>${details.status}</span></div>
+            `;
+            document.getElementById('detailsModal').classList.remove('hidden');
+        }
+
+        function closeDetailsModal() {
+            document.getElementById('detailsModal').classList.add('hidden');
+        }
+
+        async function loadTopologyData() {
+            const session = JSON.parse(localStorage.getItem('fibernoc_session') || 'null');
+            const statusText = document.getElementById('statusText');
+
+            if (!session?.token) {
+                statusText.textContent = 'Sessão sem autenticação. Faça login para carregar os dados.';
+                topologySlots = buildTopologyData(fallbackOnus);
+                renderSlots();
+                renderPons();
+                return;
+            }
+
+            try {
+                statusText.textContent = 'Carregando dados da OLT...';
+                const response = await fetch('/api/onus', {
+                    headers: { Authorization: `Bearer ${session.token}` }
+                });
+                const payload = await response.json().catch(() => []);
+                const onus = Array.isArray(payload) ? payload : Array.isArray(payload.data) ? payload.data : [];
+                topologySlots = buildTopologyData(onus);
+                statusText.textContent = `Dados carregados: ${onus.length} ONU(s)`;
+                renderSlots();
+                renderPons();
+            } catch (error) {
+                console.error(error);
+                statusText.textContent = 'Falha ao carregar dados. Exibindo exemplo local.';
+                topologySlots = buildTopologyData(fallbackOnus);
+                renderSlots();
+                renderPons();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const sidebar = document.getElementById('sidebar');
+            const main = document.getElementById('main');
+            document.querySelector('.menu-toggle')?.addEventListener('click', () => {
+                sidebar?.classList.toggle('collapsed');
+                main?.classList.toggle('expanded');
+            });
+
+            document.getElementById('slotsContainer').addEventListener('click', (event) => {
+                const button = event.target.closest('[data-slot]');
+                if (!button) return;
+                selectedSlot = Number(button.dataset.slot);
+                selectedPon = null;
+                renderSlots();
+                renderPons();
+            });
+
+            document.getElementById('ponContainer').addEventListener('click', (event) => {
+                const button = event.target.closest('[data-pon]');
+                if (!button) return;
+                selectedPon = button.dataset.pon;
+                renderPons();
+            });
+
+            document.getElementById('onuList').addEventListener('click', (event) => {
+                const button = event.target.closest('[data-onu-name]');
+                if (!button) return;
+                openDetailsModal(button.dataset.onuName);
+            });
+
+            document.getElementById('detailsModal').addEventListener('click', (event) => {
+                if (event.target.id === 'detailsModal') {
+                    closeDetailsModal();
+                }
+            });
+
+            document.getElementById('closeModalBtn').addEventListener('click', closeDetailsModal);
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape') {
+                    closeDetailsModal();
+                }
+            });
+
+            loadTopologyData();
+        });
+    </script>
 </body>
 </html>

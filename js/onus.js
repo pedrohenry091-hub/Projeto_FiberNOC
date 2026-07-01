@@ -84,13 +84,20 @@ async function handleAddOnu(event) {
         pon: data.pon || 'PON 1'
     };
 
-    const created = await createOnu(payload);
-    if (created) {
-        allOnus = [created, ...allOnus];
-        renderTable(allOnus);
-        form.reset();
-        showMessage('ONU cadastrada com sucesso.');
-    } else {
+    try {
+        const created = await createOnu(payload);
+        const normalized = created && typeof created === 'object' ? created : null;
+
+        if (normalized) {
+            allOnus = [normalized, ...allOnus.filter((item) => item.mac !== normalized.mac)];
+            renderTable(allOnus);
+            form.reset();
+            showMessage('ONU cadastrada com sucesso.');
+        } else {
+            showMessage('Não foi possível cadastrar a ONU.', 'error');
+        }
+    } catch (error) {
+        console.error('Erro ao cadastrar ONU:', error);
         showMessage('Não foi possível cadastrar a ONU.', 'error');
     }
 }

@@ -6,29 +6,96 @@
     <link rel="stylesheet" href="../style.css">
 </head>
 <body>
-    <div class="main-content" style="margin-left: 0; padding: 40px;">
+    <aside class="sidebar collapsed" id="sidebar">
+        <img src="../logo.png" class="sidebar-logo" alt="Logo FiberNOC">
+        <h3>FiberNOC</h3>
+        <nav>
+            <a href="index.html"><strong>Dashboard</strong></a>
+            <a href="topology.html"><strong>Topologia (OLT)</strong></a>
+            <a href="onu.html"><strong>ONUs</strong></a>
+            <a href="mapa.html"><strong>Mapa Lógico</strong></a>
+            <a href="unauthorized.html"><strong>ONUs não autorizadas</strong></a>
+            <a href="critical_signals.html"><strong>Sinal Crítico</strong></a>
+            <a href="logs.html"><strong>Logs de Eventos</strong></a>
+        </nav>
+    </aside>
+
+    <main class="main-content expanded" id="main">
         <header>
-            <h2>Obtain Unauthorized ONU</h2>
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <button class="menu-toggle" aria-label="Abrir menu">☰</button>
+                <h1>ONUs não autorizadas</h1>
+            </div>
         </header>
+        <div class="table-container" style="padding: 20px; margin-bottom: 20px;">
+            <h2 style="margin-top: 0;">Autorização de novas ONUs</h2>
+            <p style="margin: 0; color: #cbd5e1;">Autorize abaixo as ONUs pendentes para cadastrá-las no sistema e disponibilizá-las na topologia.</p>
+        </div>
+
         <div class="table-container">
             <table class="onu-table">
                 <thead>
                     <tr>
+                        <th>ONU</th>
                         <th>MAC Address</th>
-                        <th>Slot/Port</th>
+                        <th>Slot/Porta</th>
                         <th>Ação</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
-                        <td><code>FHTT09BBA123</code></td>
-                        <td>1/1/8</td>
-                        <td><button style="background: #22c55e; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">Autorizar</button></td>
-                    </tr>
-                </tbody>
+                <tbody id="pendingOnusBody"></tbody>
             </table>
         </div>
-        <button onclick="location.href='index.html'" style="margin-top: 20px;">Voltar ao Painel</button>
-    </div>
+    </main>
+
+    <script type="module">
+        const body = document.getElementById('pendingOnusBody');
+
+        async function loadPendingOnus() {
+            const response = await fetch('/api/unauthorized');
+            const data = await response.json();
+
+            if (!body) return;
+            body.innerHTML = '';
+
+            if (!Array.isArray(data) || data.length === 0) {
+                body.innerHTML = '<tr><td colspan="4" style="text-align:center; padding: 16px;">Nenhuma ONU pendente.</td></tr>';
+                return;
+            }
+
+            data.forEach((onu) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${onu.nome}</td>
+                    <td><code>${onu.mac}</code></td>
+                    <td>${onu.slot}/${onu.porta}</td>
+                    <td><button data-id="${onu.id}" class="authorize-btn">Autorizar</button></td>
+                `;
+                body.appendChild(row);
+            });
+        }
+
+        body?.addEventListener('click', async (event) => {
+            const button = event.target.closest('.authorize-btn');
+            if (!button) return;
+
+            const id = button.getAttribute('data-id');
+            const response = await fetch(`/api/unauthorized/${id}/authorize`, { method: 'POST' });
+            if (response.ok) {
+                await loadPendingOnus();
+                alert('ONU autorizada com sucesso.');
+            } else {
+                alert('Não foi possível autorizar a ONU.');
+            }
+        });
+
+        const sidebar = document.getElementById('sidebar');
+        const main = document.getElementById('main');
+        document.querySelector('.menu-toggle')?.addEventListener('click', () => {
+            sidebar?.classList.toggle('collapsed');
+            main?.classList.toggle('expanded');
+        });
+
+        loadPendingOnus();
+    </script>
 </body>
 </html>

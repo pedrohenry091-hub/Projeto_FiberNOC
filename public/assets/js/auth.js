@@ -9,19 +9,17 @@ function generateToken() {
 }
 
 async function login(username, password) {
+  const normalizedUsername = (username || '').trim();
+
   try {
     const response = await fetch('/api/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password })
+      body: JSON.stringify({ username: normalizedUsername, password })
     });
 
-    if (!response.ok) {
-      throw new Error('Falha ao autenticar');
-    }
-
-    const data = await response.json();
-    if (data.success) {
+    const data = await response.json().catch(() => ({}));
+    if (response.ok && data.success) {
       const sessionData = { user: data.user, loginTime: data.loginTime, token: data.token };
       localStorage.setItem('fibernoc_session', JSON.stringify(sessionData));
       return true;
@@ -30,9 +28,9 @@ async function login(username, password) {
     console.warn('API indisponível, usando fallback local', error);
   }
 
-  if (VALID_CREDENTIALS[username] && VALID_CREDENTIALS[username] === password) {
+  if (VALID_CREDENTIALS[normalizedUsername] && VALID_CREDENTIALS[normalizedUsername] === password) {
     const sessionData = {
-      user: username,
+      user: normalizedUsername,
       loginTime: new Date().toISOString(),
       token: generateToken()
     };

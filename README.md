@@ -1,96 +1,138 @@
 # FiberNOC API
 
-Esta API foi criada para servir como backend simples para o projeto **FiberNOC**, com foco em monitoramento de ONU.
+Aplicação full-stack para monitoramento de ONU com backend em Express, banco PostgreSQL via Prisma e interface web integrada.
+
+## Funcionalidades principais
+- Autenticação com JWT
+- Rotas protegidas para consulta e criação de ONUs
+- Endpoints de métricas, logs e alertas
+- Documentação básica da API em tempo de execução
+- Testes automatizados com Vitest
 
 ## Tecnologias
 - Node.js
-- Express
+- Express.js
 - TypeScript
+- Prisma ORM
+- PostgreSQL
+- JWT + bcryptjs
 - Vitest
-- Docker
+- Docker Compose
 
-## Instalação
+## Requisitos
+- Node.js 22+
+- npm 10+
+- Docker Desktop (opcional, para execução em containers)
+
+## Instalação local
+
+1. Instale as dependências:
 
 ```bash
 npm install
 ```
 
-## Variáveis de ambiente
-
-Copie o arquivo de exemplo:
+2. Configure as variáveis de ambiente:
 
 ```bash
 cp .env.example .env
 ```
 
-Valores padrão:
-- `PORT=3000`
-- `NODE_ENV=development`
-- `DATABASE_URL="file:./dev.db"`
+Exemplo de valores:
 
-## Execução em desenvolvimento
-
-```bash
-npm run dev
+```env
+PORT=3000
+NODE_ENV=development
+POSTGRES_HOST=localhost
+POSTGRES_PORT=5432
+POSTGRES_DB=fibernoc
+POSTGRES_USER=fibernoc
+POSTGRES_PASSWORD=fibernoc
+DATABASE_URL=postgresql://fibernoc:fibernoc@localhost:5432/fibernoc
+JWT_SECRET=change-me
 ```
 
-O servidor ficará disponível em:
-- http://localhost:3000
-
-## Banco de dados com Prisma
-
-Para criar o banco local e aplicar as migrações:
+3. Aplique as migrações e seed:
 
 ```bash
 npm run db:migrate
 npm run db:seed
 ```
 
-Para regenerar o cliente após mudanças no schema:
+4. Inicie o servidor:
 
 ```bash
+npm run dev
+```
+
+A aplicação ficará disponível em:
+- http://localhost:3000
+- http://localhost:3000/api/docs
+
+## Execução com Docker
+
+```bash
+docker compose up --build
+```
+
+A API e o banco serão iniciados automaticamente. A aplicação ficará disponível em:
+- http://localhost:3000
+
+## Scripts disponíveis
+
+```bash
+npm run dev
+npm run build
+npm run test
+npm run db:migrate
+npm run db:seed
 npm run db:generate
 ```
 
-## Build para produção
+## Autenticação
 
-```bash
-npm run build
+Credenciais padrão para testes:
+- admin / admin123
+- fibernoc / senha456
+- tecnico / tecnico789
+
+O login retorna um token JWT que deve ser enviado no header:
+
+```http
+Authorization: Bearer <token>
 ```
 
-## Execução em produção
+## Endpoints principais
 
-```bash
-npm run start
-```
+### Saúde
+- GET /health
+
+### Autenticação
+- POST /api/auth/login
+- GET /api/auth/me
+
+### ONU
+- GET /api/onus
+- GET /api/onus/:id
+- POST /api/onus
+- PUT /api/onus/:id
+
+### Logs e métricas
+- GET /api/logs
+- GET /api/stats
+- GET /api/summary
+- GET /api/alerts
 
 ## Testes
 
 ```bash
-npm test
+npx vitest run
 ```
 
-## Lint
+## Estrutura do projeto
+- src/server.ts: servidor principal e middleware global
+- src/routes/api.ts: rotas da API
+- src/lib/auth.ts: autenticação JWT e hashing
+- prisma/schema.prisma: modelo do banco de dados
+- tests/: testes automatizados
 
-```bash
-npm run lint
-```
-
-## Docker
-
-### Build da imagem
-
-```bash
-docker build -t fibernoc-api .
-```
-
-### Rodar o container
-
-```bash
-docker run -p 3000:3000 --env-file .env fibernoc-api
-```
-
-## Endpoints principais
-- `GET /` → mensagem de boas-vindas
-- `GET /health` → status da aplicação
-- `GET /api/example` → exemplo de rota modularizada
