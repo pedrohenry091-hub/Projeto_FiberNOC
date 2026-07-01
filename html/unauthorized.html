@@ -50,28 +50,60 @@
     <script type="module">
         const body = document.getElementById('pendingOnusBody');
 
-        async function loadPendingOnus() {
-            const response = await fetch('/api/unauthorized');
-            const data = await response.json();
+        function getAuthHeaders() {
+            const rawSession = localStorage.getItem('fibernoc_session');
+            if (!rawSession) return {};
 
-            if (!body) return;
-            body.innerHTML = '';
+            try {
+                const session = JSON.parse(rawSession);
+                return session?.token ? { Authorization: `Bearer ${session.token}` } : {};
+            } catch {
+                return {};
+            }
+        }
 
-            if (!Array.isArray(data) || data.length === 0) {
-                body.innerHTML = '<tr><td colspan="4" style="text-align:center; padding: 16px;">Nenhuma ONU pendente.</td></tr>';
-                return;
+        async function requestJson(url, options = {}) {
+            const headers = {
+                ...(options.headers || {}),
+                ...getAuthHeaders()
+            };
+
+            const response = await fetch(url, { ...options, headers });
+            if (!response.ok) {
+                const errorText = await response.text().catch(() => '');
+                throw new Error(errorText || 'Falha na requisição.');
             }
 
-            data.forEach((onu) => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${onu.nome}</td>
-                    <td><code>${onu.mac}</code></td>
-                    <td>${onu.slot}/${onu.porta}</td>
-                    <td><button data-id="${onu.id}" class="authorize-btn">Autorizar</button></td>
-                `;
-                body.appendChild(row);
-            });
+            return response.json();
+        }
+
+        async function loadPendingOnus() {
+            if (!body) return;
+            body.innerHTML = '<tr><td colspan="4" style="text-align:center; padding: 16px;">Carregando...</td></tr>';
+
+            try {
+                const data = await requestJson('/api/unauthorized');
+                body.innerHTML = '';
+
+                if (!Array.isArray(data) || data.length === 0) {
+                    body.innerHTML = '<tr><td colspan="4" style="text-align:center; padding: 16px;">Nenhuma ONU pendente.</td></tr>';
+                    return;
+                }
+
+                data.forEach((onu) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${onu.nome}</td>
+                        <td><code>${onu.mac}</code></td>
+                        <td>${onu.slot}/${onu.porta}</td>
+                        <td><button data-id="${onu.id}" class="authorize-btn">Autorizar</button></td>
+                    `;
+                    body.appendChild(row);
+                });
+            } catch (error) {
+                body.innerHTML = '<tr><td colspan="4" style="text-align:center; padding: 16px; color: #fda4af;">Faça login para visualizar as ONUs pendentes.</td></tr>';
+                console.error(error);
+            }
         }
 
         body?.addEventListener('click', async (event) => {
@@ -79,11 +111,12 @@
             if (!button) return;
 
             const id = button.getAttribute('data-id');
-            const response = await fetch(`/api/unauthorized/${id}/authorize`, { method: 'POST' });
-            if (response.ok) {
+            try {
+                await requestJson(`/api/unauthorized/${id}/authorize`, { method: 'POST' });
                 await loadPendingOnus();
                 alert('ONU autorizada com sucesso.');
-            } else {
+            } catch (error) {
+                console.error(error);
                 alert('Não foi possível autorizar a ONU.');
             }
         });
