@@ -8,21 +8,20 @@
 </head>
 <body>
 
-<aside class="sidebar" id="sidebar">
+<aside class="sidebar collapsed" id="sidebar">
     <img src="../logo.png" class="sidebar-logo" alt="Logo FiberNOC">
     <h3>FiberNOC</h3>
     <nav>
         <a href="index.html"><strong>Dashboard</strong></a>
         <a href="topology.html"><strong>Topologia (OLT)</strong></a>
         <a href="onu.html"><strong>ONUs</strong></a>
-        <a href="mapa.html"><strong>Mapa Lógico</strong></a>
         <a href="unauthorized.html"><strong>ONUs não autorizadas</strong></a>
         <a href="critical_signals.html"><strong>Sinal Crítico</strong></a>
         <a href="logs.html"><strong>Logs de Eventos</strong></a>
     </nav>
 </aside>
 
-<main class="main-content" id="main">
+<main class="main-content expanded" id="main">
     <header>
         <button class="menu-toggle">☰</button>
         <h1>Lista de ONUs</h1>
@@ -35,29 +34,6 @@
             placeholder="Buscar por Nome ou MAC..." 
             class="search-box"
         >
-    </div>
-
-    <div class="table-container" style="padding: 20px; margin-bottom: 20px;">
-        <h2 style="margin-top: 0;">Adicionar ONU</h2>
-        <form id="formAddOnu">
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px;">
-                <input type="text" name="nome" placeholder="Nome / Cliente" required>
-                <input type="text" name="mac" placeholder="MAC / SN" required>
-                <select name="status">
-                    <option value="online">Online</option>
-                    <option value="offline">Offline</option>
-                    <option value="warning">Warning</option>
-                </select>
-                <input type="number" step="0.1" name="sinal" value="-20" placeholder="Sinal (dBm)">
-                <input type="text" name="regiao" placeholder="Região">
-                <input type="text" name="olt" placeholder="OLT">
-                <input type="text" name="pon" placeholder="PON">
-            </div>
-            <div style="margin-top: 12px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
-                <button type="submit">Cadastrar ONU</button>
-                <span id="addOnuMessage" style="color: #0f766e; font-size: 0.95rem;"></span>
-            </div>
-        </form>
     </div>
 
     <div class="table-container">

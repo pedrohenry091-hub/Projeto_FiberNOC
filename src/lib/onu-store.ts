@@ -157,6 +157,25 @@ export function updateFallbackOnu(id: number, payload: Partial<OnuRecord>) {
   return { ...fallbackStore.onus[index] };
 }
 
+export function deleteFallbackOnu(id: number) {
+  const index = fallbackStore.onus.findIndex((onu) => onu.id === id);
+  if (index === -1) {
+    return null;
+  }
+
+  const [removed] = fallbackStore.onus.splice(index, 1);
+  fallbackStore.logs.unshift({
+    id: fallbackStore.logs.length + 1,
+    data: new Date().toLocaleString('pt-BR'),
+    onu: removed.nome,
+    evento: 'DELETE',
+    detalhe: 'ONU removida manualmente.',
+    tipo: 'info'
+  });
+
+  return removed;
+}
+
 export function getFallbackLogs(limit = 10) {
   return fallbackStore.logs.slice(0, limit).map((log) => ({ ...log }));
 }

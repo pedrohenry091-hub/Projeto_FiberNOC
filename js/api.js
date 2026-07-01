@@ -8,11 +8,18 @@ let API_BASE_URL = '/api';
 async function apiCall(endpoint, options = {}) {
     try {
         const url = `${API_BASE_URL}${endpoint}`;
+        const session = JSON.parse(localStorage.getItem('fibernoc_session') || 'null');
+        const headers = {
+            'Content-Type': 'application/json',
+            ...(options.headers || {}),
+        };
+
+        if (session?.token) {
+            headers.Authorization = `Bearer ${session.token}`;
+        }
+
         const response = await fetch(url, {
-            headers: {
-                'Content-Type': 'application/json',
-                ...options.headers,
-            },
+            headers,
             ...options,
         });
 

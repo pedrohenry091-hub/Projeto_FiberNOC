@@ -11,5 +11,15 @@ export const prisma = new PrismaClient({
   log: process.env.NODE_ENV === 'development' ? ['query'] : [],
 });
 
+export async function testDatabaseConnection() {
+  try {
+    await prisma.$connect();
+    return true;
+  } catch (error) {
+    console.warn('PostgreSQL indisponível, usando modo fallback:', error);
+    return false;
+  }
+}
+
 export { databaseUrl };
 export default prisma;

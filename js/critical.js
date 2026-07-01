@@ -49,7 +49,6 @@ async function renderCriticalPanel() {
                 </td>
                 <td>
                     <button title="Ver Detalhes" onclick="location.href='details.html?id=${onu.id}'">🔍</button>
-                    <button title="Localizar no Mapa" onclick="location.href='mapa.html?id=${onu.id}'">📍</button>
                 </td>
             `;
 

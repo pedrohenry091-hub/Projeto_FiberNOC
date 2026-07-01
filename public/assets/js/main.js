@@ -2,17 +2,33 @@
 
 import { getOnus, getLogs, getStats, getAlerts } from './api.js';
 
+function setPageFeedback(message, type = 'info') {
+    const feedback = document.getElementById('page-feedback');
+    if (!feedback) return;
+
+    if (!message) {
+        feedback.textContent = '';
+        feedback.className = 'page-feedback';
+        feedback.style.display = 'none';
+        return;
+    }
+
+    feedback.textContent = message;
+    feedback.className = `page-feedback ${type}`;
+    feedback.style.display = 'block';
+}
+
 /**
  * 1. Atualiza os números e o status geral no Dashboard
  * Busca dados em tempo real da API
  */
 async function updateDashboardStats() {
     try {
-        // Tenta usar endpoint de stats se disponível na API
+        setPageFeedback('Carregando dados do dashboard...', 'info');
+
         const stats = await getStats().catch(() => null);
 
         if (stats && stats.onlineCount !== undefined) {
-            // API tem endpoint dedicado para stats
             const elOnline = document.getElementById('stat-online');
             const elOffline = document.getElementById('stat-offline');
             const elAlerts = document.getElementById('stat-alerts');
@@ -22,8 +38,8 @@ async function updateDashboardStats() {
             if (elAlerts) elAlerts.textContent = stats.alertCount;
 
             updateNetworkStatus(stats.offlineCount > 0);
+            setPageFeedback('');
         } else {
-            // Fallback: busca ONUs e Logs manualmente
             const onus = await getOnus();
             const logs = await getLogs();
 
@@ -40,9 +56,12 @@ async function updateDashboardStats() {
             if (elAlerts) elAlerts.textContent = alertCount;
 
             updateNetworkStatus(offlineCount > 0);
+            setPageFeedback('');
         }
     } catch (error) {
         console.error("❌ Erro ao atualizar stats:", error);
+        const message = error instanceof Error ? error.message : 'Falha ao buscar dados.';
+        setPageFeedback(`Não foi possível atualizar as métricas: ${message}`, 'error');
     }
 }
 
@@ -99,6 +118,8 @@ async function renderAlertList() {
         });
     } catch (error) {
         console.error("❌ Erro ao renderizar alertas:", error);
+        const message = error instanceof Error ? error.message : 'Falha ao buscar alertas.';
+        setPageFeedback(`Não foi possível carregar os alertas: ${message}`, 'error');
     }
 }
 

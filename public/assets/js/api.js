@@ -1,20 +1,36 @@
 const API_BASE_URL = '/api';
 
 async function apiCall(endpoint, options = {}) {
+  const session = JSON.parse(localStorage.getItem('fibernoc_session') || 'null');
+  const headers = {
+    'Content-Type': 'application/json',
+    ...(options.headers || {})
+  };
+
+  if (session?.token) {
+    headers.Authorization = `Bearer ${session.token}`;
+  }
+
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-    headers: {
-      'Content-Type': 'application/json',
-      ...(options.headers || {})
-    },
+    headers,
     ...options
   });
 
-  if (!response.ok) {
-    const errorPayload = await response.json().catch(() => ({}));
-    throw new Error(errorPayload.message || `HTTP ${response.status}`);
+  const contentType = response.headers.get('content-type') || '';
+  let payload = {};
+
+  if (contentType.includes('application/json')) {
+    payload = await response.json().catch(() => ({}));
+  } else {
+    const text = await response.text().catch(() => '');
+    payload = text ? { message: text } : {};
   }
 
-  return response.json();
+  if (!response.ok) {
+    throw new Error(payload.message || payload.error || `HTTP ${response.status}`);
+  }
+
+  return payload;
 }
 
 export async function getOnus() {

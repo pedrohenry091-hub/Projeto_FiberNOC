@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import apiRoutes from './routes/api.js';
 import prisma from './database/database.js';
+import { AppError } from './lib/errors.js';
 
 dotenv.config();
 
@@ -31,6 +32,60 @@ app.get('/', (_req: Request, res: Response) => {
   res.sendFile(path.join(process.cwd(), 'html', 'index.html'));
 });
 
+app.get('/index.html', (_req: Request, res: Response) => {
+  res.sendFile(path.join(process.cwd(), 'html', 'index.html'));
+});
+
+app.get('/login.html', (_req: Request, res: Response) => {
+  res.sendFile(path.join(process.cwd(), 'html', 'login.html'));
+});
+
+app.get('/api/docs', (_req: Request, res: Response) => {
+  res.json({
+    openapi: '3.0.0',
+    info: {
+      title: 'FiberNOC API',
+      version: '1.0.0',
+      description: 'API do projeto FiberNOC com autenticação JWT, monitoramento de ONU e métricas.'
+    },
+    paths: {
+      '/api/auth/login': {
+        post: {
+          summary: 'Autenticar usuário',
+          responses: {
+            '200': { description: 'Login realizado com sucesso' },
+            '401': { description: 'Credenciais inválidas' }
+          }
+        }
+      },
+      '/api/auth/register': {
+        post: {
+          summary: 'Registrar novo usuário',
+          responses: {
+            '201': { description: 'Usuário cadastrado com sucesso' },
+            '409': { description: 'Usuário já existe' }
+          }
+        }
+      },
+      '/api/onus': {
+        get: { summary: 'Listar ONUs' },
+        post: { summary: 'Criar ONU' }
+      },
+      '/api/onus/{id}': {
+        get: { summary: 'Buscar ONU por id' },
+        put: { summary: 'Atualizar ONU' },
+        delete: { summary: 'Remover ONU' }
+      },
+      '/api/logs': {
+        get: { summary: 'Listar logs' }
+      },
+      '/api/stats': {
+        get: { summary: 'Retornar estatísticas' }
+      }
+    }
+  });
+});
+
 app.use(express.static(path.join(process.cwd(), 'public')));
 app.use(express.static(path.join(process.cwd(), 'html')));
 app.use(express.static(process.cwd()));
@@ -45,16 +100,30 @@ app.get('/health', (_req: Request, res: Response) => {
   });
 });
 
-app.use((err: Error, _req: Request, res: Response, next: NextFunction) => {
-  void next;
-  console.error(err.stack || err.message);
+app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
+  if (err instanceof AppError) {
+    res.status(err.statusCode).json({
+      success: false,
+      error: err.message
+    });
+    return;
+  }
+
+  console.error(err instanceof Error ? err.stack || err.message : err);
   res.status(500).json({
+    success: false,
     error: 'Internal Server Error'
   });
 });
 
 const startServer = async () => {
-  await prisma.$connect();
+  try {
+    await prisma.$connect();
+    console.log('Conexão com PostgreSQL estabelecida.');
+  } catch (error) {
+    console.warn('PostgreSQL indisponível no momento. O servidor continuará em modo fallback.');
+    console.warn(error);
+  }
 
   const server = app.listen(PORT, () => {
     console.log(`Servidor rodando em http://localhost:${PORT}`);
@@ -79,7 +148,8 @@ const startServer = async () => {
   });
 };
 
-if (process.argv[1] && process.argv[1].endsWith('server.ts')) {
+const isServerEntry = process.argv[1]?.endsWith('server.ts') || process.argv[1]?.endsWith('server.js');
+if (isServerEntry) {
   void startServer();
 }
 

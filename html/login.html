@@ -44,6 +44,27 @@
         .credentials-info strong {
             color: #333;
         }
+        .toggle-form {
+            margin-top: 16px;
+            text-align: center;
+            font-size: 14px;
+            color: #555;
+        }
+        .toggle-form button {
+            background: none;
+            border: none;
+            color: #2563eb;
+            cursor: pointer;
+            font-weight: 600;
+            padding: 0;
+        }
+        .register-panel {
+            display: none;
+            margin-top: 12px;
+        }
+        .register-panel.show {
+            display: block;
+        }
     </style>
 </head>
 <body class="login-body">
@@ -72,6 +93,19 @@
             </button>
         </form>
 
+        <div class="register-panel" id="registerPanel">
+            <h3>Criar conta</h3>
+            <form id="registerForm">
+                <input type="text" id="registerUsername" placeholder="Novo usuário" required autocomplete="username">
+                <input type="password" id="registerPassword" placeholder="Nova senha" required autocomplete="new-password">
+                <button type="submit" id="registerBtn">Criar conta</button>
+            </form>
+        </div>
+
+        <div class="toggle-form">
+            <button type="button" id="toggleFormBtn">Criar uma conta</button>
+        </div>
+
         <div id="errorMessage" class="error-message"></div>
         <div id="successMessage" class="success-message"></div>
 
@@ -89,13 +123,19 @@
         protectLoginPage();
 
         const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
         const usernameInput = document.getElementById('username');
         const passwordInput = document.getElementById('password');
+        const registerUsernameInput = document.getElementById('registerUsername');
+        const registerPasswordInput = document.getElementById('registerPassword');
         const errorMessage = document.getElementById('errorMessage');
         const successMessage = document.getElementById('successMessage');
         const submitBtn = document.getElementById('submitBtn');
+        const registerBtn = document.getElementById('registerBtn');
         const loadingSpan = document.getElementById('loading');
         const btnText = submitBtn.querySelector('.btn-text');
+        const toggleFormBtn = document.getElementById('toggleFormBtn');
+        const registerPanel = document.getElementById('registerPanel');
 
         /**
          * Limpa as mensagens de erro/sucesso
@@ -164,12 +204,11 @@
         }
 
         /**
-         * Envia o formulário com validação real
+         * Simula o envio do formulário com validação
          */
         loginForm.addEventListener('submit', async function(event) {
             event.preventDefault();
 
-            // Validar antes de tentar login
             if (!validateForm()) {
                 return;
             }
@@ -177,34 +216,28 @@
             const username = usernameInput.value.trim();
             const password = passwordInput.value;
 
-            // Mostrar estado de carregamento
             submitBtn.disabled = true;
             loadingSpan.classList.add('show');
             btnText.textContent = '';
 
             try {
-                const ok = await login(username, password);
+                const authenticated = await login(username, password);
 
-                if (ok) {
+                if (authenticated) {
                     showSuccess(`✅ Bem-vindo, ${username}!`);
-
                     setTimeout(() => {
                         window.location.href = 'index.html';
-                    }, 1000);
+                    }, 700);
                 } else {
-                    showError('❌ Usuário ou senha incorretos');
-
+                    showError('❌ Usuário ou senha incorretos. Verifique as credenciais.');
                     submitBtn.disabled = false;
                     loadingSpan.classList.remove('show');
                     btnText.textContent = 'Entrar';
-
                     passwordInput.value = '';
                     usernameInput.focus();
                 }
             } catch (error) {
-                console.error('Erro no login:', error);
-                showError('❌ Não foi possível validar o acesso no momento.');
-
+                showError(error instanceof Error ? error.message : '❌ Não foi possível validar o login neste momento.');
                 submitBtn.disabled = false;
                 loadingSpan.classList.remove('show');
                 btnText.textContent = 'Entrar';
@@ -218,10 +251,65 @@
          */
         usernameInput.addEventListener('input', clearMessages);
         passwordInput.addEventListener('input', clearMessages);
+        registerUsernameInput.addEventListener('input', clearMessages);
+        registerPasswordInput.addEventListener('input', clearMessages);
 
-        /**
-         * Focar no campo de senha ao pressionar Tab
-         */
+        toggleFormBtn.addEventListener('click', () => {
+            registerPanel.classList.toggle('show');
+            const showingRegister = registerPanel.classList.contains('show');
+            toggleFormBtn.textContent = showingRegister ? 'Voltar para o login' : 'Criar uma conta';
+            clearMessages();
+        });
+
+        registerForm.addEventListener('submit', async function(event) {
+            event.preventDefault();
+            clearMessages();
+
+            const username = registerUsernameInput.value.trim();
+            const password = registerPasswordInput.value;
+
+            if (!username || username.length < 3) {
+                showError('❌ O usuário deve ter pelo menos 3 caracteres.');
+                registerUsernameInput.focus();
+                return;
+            }
+
+            if (!password || password.length < 6) {
+                showError('❌ A senha deve ter pelo menos 6 caracteres.');
+                registerPasswordInput.focus();
+                return;
+            }
+
+            registerBtn.disabled = true;
+            registerBtn.textContent = 'Criando...';
+
+            try {
+                const response = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await response.json().catch(() => ({}));
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Não foi possível criar a conta.');
+                }
+
+                showSuccess(`✅ Conta criada com sucesso para ${username}!`);
+                registerForm.reset();
+                registerPanel.classList.remove('show');
+                toggleFormBtn.textContent = 'Criar uma conta';
+                usernameInput.value = username;
+                passwordInput.focus();
+            } catch (error) {
+                showError(error instanceof Error ? error.message : '❌ Não foi possível criar a conta.');
+            } finally {
+                registerBtn.disabled = false;
+                registerBtn.textContent = 'Criar conta';
+            }
+        });
+
         usernameInput.addEventListener('keypress', function(event) {
             if (event.key === 'Enter') {
                 passwordInput.focus();

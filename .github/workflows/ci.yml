@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: fibernoc
+          POSTGRES_USER: fibernoc
+          POSTGRES_PASSWORD: fibernoc
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U fibernoc -d fibernoc"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    env:
+      NODE_ENV: test
+      PORT: 3000
+      DATABASE_URL: postgresql://fibernoc:fibernoc@localhost:5432/fibernoc
+      JWT_SECRET: ci-secret
+
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Gerar cliente Prisma
+        run: npx prisma generate
+
+      - name: Aplicar migrations
+        run: npx prisma migrate deploy
+
+      - name: Build da aplicação
+        run: npm run build
+
+      - name: Executar testes
+        run: npx vitest run
