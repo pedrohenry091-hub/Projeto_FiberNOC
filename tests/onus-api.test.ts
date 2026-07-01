@@ -57,7 +57,7 @@ describe('POST /api/onus', () => {
       .post('/api/unauthorized/1/authorize')
       .set('Authorization', `Bearer ${token}`);
 
-    expect(authorizedResponse.status).toBe(200);
+    expect(authorizedResponse.status).toBe(201);
 
     const listResponse = await request(app)
       .get('/api/onus')
@@ -71,6 +71,19 @@ describe('POST /api/onus', () => {
           mac: 'FHTT09BBA123'
         })
       ])
+    );
+
+    const pendingResponse = await request(app)
+      .get('/api/unauthorized')
+      .set('Authorization', `Bearer ${token}`);
+
+    expect(pendingResponse.status).toBe(200);
+    expect(pendingResponse.body).toHaveLength(1);
+    expect(pendingResponse.body[0]).toEqual(
+      expect.objectContaining({
+        status: 'pending',
+        nome: expect.stringMatching(/ONU PENDENTE|ONU DEMO/)
+      })
     );
   });
 });

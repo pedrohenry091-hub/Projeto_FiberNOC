@@ -21,6 +21,8 @@ type PendingOnu = {
   status: string;
 };
 
+let nextPendingId = 2;
+
 const pendingOnus: PendingOnu[] = [
   {
     id: 1,
@@ -31,6 +33,21 @@ const pendingOnus: PendingOnu[] = [
     status: 'pending'
   }
 ];
+
+function createDemoPendingOnu() {
+  const demoId = nextPendingId++;
+  const demoOnu: PendingOnu = {
+    id: demoId,
+    nome: `ONU DEMO ${String(demoId).padStart(2, '0')}`,
+    mac: `FHTT${Date.now().toString().slice(-8)}`,
+    slot: `${(demoId % 4) + 1}`,
+    porta: `${(demoId % 3) + 1}/${(demoId % 8) + 1}`,
+    status: 'pending'
+  };
+
+  pendingOnus.push(demoOnu);
+  return demoOnu;
+}
 
 const router = Router();
 
@@ -134,11 +151,13 @@ router.post('/unauthorized/:id/authorize', requireAuth, async (req: Request, res
       }
     });
 
+    createDemoPendingOnu();
     res.status(201).json(created);
     return;
   } catch (error) {
     console.warn('Falha ao persistir ONU autorizada no Prisma, usando fallback local:', error);
     const created = createFallbackOnu(payload);
+    createDemoPendingOnu();
     res.status(201).json(created);
   }
 });
